@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Instagram,
@@ -12,10 +12,89 @@ import BgTextAnimation from "./BgTextAnimation";
 import { TypeAnimation } from "react-type-animation";
 import VideoModal from "./VideoModal";
 import { FaPlay } from "react-icons/fa";
+import dbConnect, { collectionNames } from "@/app/lib/dbConnect";
 
 
+
+
+export const portfolioData = {
+
+  hero: {
+
+    greeting: "HELLO, I am",
+
+    name: "Raihan Uddin",
+
+    roles: [
+
+      "Full Stack Developer", 2000,
+
+      "MERN Stack Developer", 2000,
+
+      "React Enthusiast", 2000,
+
+      "Node.js Backend Builder", 2000,
+
+      "Graphic Designer", 2000,
+
+      "Printing design and social design", 2000,
+
+    ],
+
+    bgScrollingText: "Full Stack Developer",
+
+    profileImg: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&h=900&fit=crop&crop=faces",
+
+    bgImage: "https://i.postimg.cc/htkH77KF/banner-background-one.jpg",
+
+    videoUrl: "https://www.youtube.com/embed/qzxW7iMQbKQ",
+
+    buttons: [
+
+      { text: "Watch Intro", icon: <FaPlay /> },
+
+    ]
+
+  },
+
+
+
+  about: {
+
+    heading: "About Me.",
+
+    description: "A personal portfolio is a collection of your work, that is achievements, and skills that web design highlights in your growth",
+
+    socialLabel: "Find me on",
+
+    socials: [
+
+      { icon: <Instagram className="w-5 h-5" />, link: "#" },
+
+      { icon: <Linkedin className="w-5 h-5" />, link: "#" },
+
+      { icon: <Twitter className="w-5 h-5" />, link: "#" },
+
+      { icon: <Facebook className="w-5 h-5" />, link: "#" },
+
+    ]
+
+  }
+
+};
+
+
+
+
+// const heroCollection = dbConnect(collectionNames.MY_INFO)
+// const data = await heroCollection.find({}).toArray()
+
+// console.log(data)
 
 export default function Hero() {
+
+
+
   const { hero } = portfolioData;
   const { about } = portfolioData;
 
