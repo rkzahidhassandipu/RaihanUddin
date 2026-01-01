@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+   images: {
+    domains: ['i.postimg.cc'], // add the host of your image
+  },
 };
 
 export default nextConfig;
