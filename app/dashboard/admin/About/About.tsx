@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Plus, Trash2, Eye, EyeOff, Code, Heart, User } from 'lucide-react';
+import { useHero } from "../../../hooks/useHero";
+import { HeroData } from "../../../types/dataTypes";
 
-const getIcon = (iconName) => {
+const getIcon = (iconName: string) => {
   switch (iconName) {
     case "Code":
       return <Code className="w-8 h-8" />;
@@ -13,153 +15,125 @@ const getIcon = (iconName) => {
 };
 
 export default function AboutEditor() {
-  const [portfolioData, setPortfolioData] = useState({
-    about: {
-      heading: "About Me",
-      subtitle: "Who I am, what I do, and how I got here",
-      journeyTitle: "My Journey",
-      journeyParagraphs: [
-        "I am a professional Web Developer with a deep passion for building modern and responsive web applications. I've been working in the web development field for a long time, but my journey has not been easy. Despite trying multiple times and following many YouTube tutorials and playlists, I struggled due to the lack of proper guidance.",
-        "Recently, I completed a comprehensive course from Programming Hero, which completely changed my perspective. From there, I gained a clear understanding of how to learn new technologies, how to think like a developer, and how to stay motivated throughout a project.",
-      ],
-      interests: [
-        {
-          iconName: "Code",
-          title: "Web Developer",
-          desc: "Building modern full-stack applications with clean and scalable code.",
-          points: [
-            "MERN Stack (MongoDB, Express.js, React.js, Node.js)",
-            "Firebase authentication (Email/Password + Google)",
-            "Stripe payment integration",
-            "Responsive UI with Tailwind CSS",
-          ],
-        },
-        {
-          iconName: "Heart",
-          title: "Graphic Designer",
-          desc: "Creating visually appealing and user-focused designs.",
-          points: [
-            "Social media design",
-            "Branding and logo design",
-            "T-shirt and motion graphics",
-            "4+ years of hands-on experience",
-          ],
-        },
-      ],
-    },
-  });
-
+  const { data: fetchedData, loading, error, updateHero } = useHero();
+  const [portfolioData, setPortfolioData] = useState<HeroData | null>(null);
   const [activeSection, setActiveSection] = useState('basic');
   const [showPreview, setShowPreview] = useState(false);
 
-  // Update basic fields
-  const updateBasicField = (field, value) => {
-    setPortfolioData(prev => ({
-      ...prev,
-      about: { ...prev.about, [field]: value }
-    }));
+  // Load dynamic data into state when fetched
+  useEffect(() => {
+    if (fetchedData) {
+      setPortfolioData(fetchedData);
+    }
+  }, [fetchedData]);
+
+  if (loading || !portfolioData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        Error loading data: {error}
+      </div>
+    );
+  }
+
+  // Generic update helpers
+  const updateBasicField = (field: keyof HeroData['about'], value: string) => {
+    setPortfolioData(prev => prev ? { ...prev, about: { ...prev.about, [field]: value } } : prev);
   };
 
-  // Update journey paragraphs
-  const updateParagraph = (index, value) => {
+  const updateParagraph = (index: number, value: string) => {
+    if (!portfolioData) return;
     const newParagraphs = [...portfolioData.about.journeyParagraphs];
     newParagraphs[index] = value;
-    setPortfolioData(prev => ({
-      ...prev,
-      about: { ...prev.about, journeyParagraphs: newParagraphs }
-    }));
+    setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, journeyParagraphs: newParagraphs } });
   };
 
   const addParagraph = () => {
-    setPortfolioData(prev => ({
-      ...prev,
+    if (!portfolioData) return;
+    setPortfolioData({
+      ...portfolioData,
       about: {
-        ...prev.about,
-        journeyParagraphs: [...prev.about.journeyParagraphs, "New paragraph content here..."]
+        ...portfolioData.about,
+        journeyParagraphs: [...portfolioData.about.journeyParagraphs, ""]
       }
-    }));
+    });
   };
 
-  const removeParagraph = (index) => {
-    setPortfolioData(prev => ({
-      ...prev,
+  const removeParagraph = (index: number) => {
+    if (!portfolioData) return;
+    setPortfolioData({
+      ...portfolioData,
       about: {
-        ...prev.about,
-        journeyParagraphs: prev.about.journeyParagraphs.filter((_, i) => i !== index)
+        ...portfolioData.about,
+        journeyParagraphs: portfolioData.about.journeyParagraphs.filter((_, i) => i !== index)
       }
-    }));
+    });
   };
 
-  // Update interests
-  const updateInterest = (index, field, value) => {
+  const updateInterest = (index: number, field: keyof HeroData['about']['interests'][0], value: any) => {
+    if (!portfolioData) return;
     const newInterests = [...portfolioData.about.interests];
     newInterests[index] = { ...newInterests[index], [field]: value };
-    setPortfolioData(prev => ({
-      ...prev,
-      about: { ...prev.about, interests: newInterests }
-    }));
+    setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, interests: newInterests } });
   };
 
   const addInterest = () => {
-    setPortfolioData(prev => ({
-      ...prev,
+    if (!portfolioData) return;
+    setPortfolioData({
+      ...portfolioData,
       about: {
-        ...prev.about,
+        ...portfolioData.about,
         interests: [
-          ...prev.about.interests,
-          {
-            iconName: "User",
-            title: "New Interest",
-            desc: "Description here",
-            points: ["Point 1"]
-          }
+          ...portfolioData.about.interests,
+          { iconName: "User", title: "", desc: "", points: [""] }
         ]
       }
-    }));
+    });
   };
 
-  const removeInterest = (index) => {
-    setPortfolioData(prev => ({
-      ...prev,
+  const removeInterest = (index: number) => {
+    if (!portfolioData) return;
+    setPortfolioData({
+      ...portfolioData,
       about: {
-        ...prev.about,
-        interests: prev.about.interests.filter((_, i) => i !== index)
+        ...portfolioData.about,
+        interests: portfolioData.about.interests.filter((_, i) => i !== index)
       }
-    }));
+    });
   };
 
-  // Update interest points
-  const updatePoint = (interestIndex, pointIndex, value) => {
+  const updatePoint = (interestIndex: number, pointIndex: number, value: string) => {
+    if (!portfolioData) return;
     const newInterests = [...portfolioData.about.interests];
     newInterests[interestIndex].points[pointIndex] = value;
-    setPortfolioData(prev => ({
-      ...prev,
-      about: { ...prev.about, interests: newInterests }
-    }));
+    setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, interests: newInterests } });
   };
 
-  const addPoint = (interestIndex) => {
+  const addPoint = (interestIndex: number) => {
+    if (!portfolioData) return;
     const newInterests = [...portfolioData.about.interests];
-    newInterests[interestIndex].points.push("New point");
-    setPortfolioData(prev => ({
-      ...prev,
-      about: { ...prev.about, interests: newInterests }
-    }));
+    newInterests[interestIndex].points.push("");
+    setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, interests: newInterests } });
   };
 
-  const removePoint = (interestIndex, pointIndex) => {
+  const removePoint = (interestIndex: number, pointIndex: number) => {
+    if (!portfolioData) return;
     const newInterests = [...portfolioData.about.interests];
     newInterests[interestIndex].points = newInterests[interestIndex].points.filter((_, i) => i !== pointIndex);
-    setPortfolioData(prev => ({
-      ...prev,
-      about: { ...prev.about, interests: newInterests }
-    }));
+    setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, interests: newInterests } });
   };
 
-  const handleSave = () => {
-    const dataStr = JSON.stringify(portfolioData, null, 2);
-    console.log('About Me Data:', dataStr);
-    alert('Data saved! Check console for export code.');
+  const handleSave = async () => {
+    if (!portfolioData) return;
+    await updateHero(portfolioData);
+    alert('Changes saved successfully!');
   };
 
   return (

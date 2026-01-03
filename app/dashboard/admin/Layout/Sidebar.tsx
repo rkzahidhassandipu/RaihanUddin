@@ -11,6 +11,7 @@ const menu = [
   { key: 'about', label: 'About Section', icon: LayoutDashboard },
   { key: 'projects', label: 'Projects', icon: Folder },
   { key: 'skills', label: 'Skills', icon: Settings  },
+  { key: 'testimonials', label: 'Testimonials', icon: Settings  },
   { key: 'contact_info', label: 'Contact Info', icon: Settings  },
 ] as const;
 

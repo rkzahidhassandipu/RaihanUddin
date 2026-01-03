@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash2, Eye, EyeOff, Mail, Phone, MessageCircle, MapPin, Edit2, Copy } from 'lucide-react';
+import { useHero } from "../../../hooks/useHero"; 
+import { HeroData } from "../../../types/dataTypes";
 
 const iconMap = {
   FaEnvelope: Mail,
@@ -9,132 +11,153 @@ const iconMap = {
 };
 
 export default function ContactEditor() {
-  const [portfolioData, setPortfolioData] = useState({
-    contact: {
-      title: {
-        first: "Get in",
-        second: "Touch",
-      },
-      subtitle: "Have a project idea or want to collaborate? Feel free to reach out to me, and let's create something amazing together.",
-      formAction: "https://formspree.io/f/xknldwlr",
-      info: [
-        {
-          icon: "FaEnvelope",
-          label: "Email",
-          value: "raihanuddin.dev@gmail.com",
-          subtitle: "Send me an email anytime",
-        },
-        {
-          icon: "FaPhoneAlt",
-          label: "Phone",
-          value: "+60 115 111 0711",
-          subtitle: "Available during business hours",
-        },
-        {
-          icon: "FaWhatsapp",
-          label: "WhatsApp",
-          value: "+60 115 111 0711",
-          subtitle: "Quick replies on WhatsApp",
-        },
-        {
-          icon: "FaMapMarkerAlt",
-          label: "Location",
-          value: "Jessore, Bangladesh",
-          subtitle: "Remote work worldwide",
-        },
-      ],
-      formFields: {
-        name: "Your Name",
-        email: "Email Address",
-        subject: "Subject",
-        message: "Type your message...",
-        buttonText: "Send Message",
-      },
-    },
-  });
+  const { data: dbData, loading, updateHero } = useHero();
 
+  const [data, setData] = useState<HeroData | null>(null);
   const [activeSection, setActiveSection] = useState('header');
   const [showPreview, setShowPreview] = useState(false);
 
-  const updateHeaderField = (field, value) => {
-    setPortfolioData(prev => ({
-      ...prev,
-      contact: { ...prev.contact, [field]: value }
-    }));
+  // Load data from database
+  useEffect(() => {
+    if (dbData) {
+      setData({
+        ...dbData,
+        contact: {
+          title: dbData.contact?.title || { first: "Get in", second: "Touch" },
+          subtitle: dbData.contact?.subtitle || 
+            "Have a project idea or want to collaborate? Feel free to reach out to me, and let's create something amazing together.",
+          formAction: dbData.contact?.formAction || "https://formspree.io/f/xknldwlr",
+          info: dbData.contact?.info || [],
+          formFields: dbData.contact?.formFields || {
+            name: "Your Name",
+            email: "Email Address",
+            subject: "Subject",
+            message: "Type your message...",
+            buttonText: "Send Message",
+          },
+        },
+      });
+      
+      console.log("✅ Contact data loaded:", dbData.contact);
+    }
+  }, [dbData]);
+
+  if (loading || !data) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-900 text-white p-10">
+        <div className="animate-pulse text-xl">Loading Contact Editor...</div>
+      </div>
+    );
+  }
+
+  const contactData = data.contact;
+
+  const updateHeaderField = (field: string, value: string) => {
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        contact: { ...prev.contact, [field]: value }
+      };
+    });
   };
 
-  const updateTitleField = (field, value) => {
-    setPortfolioData(prev => ({
-      ...prev,
-      contact: {
-        ...prev.contact,
-        title: { ...prev.contact.title, [field]: value }
-      }
-    }));
+  const updateTitleField = (field: string, value: string) => {
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          title: { ...prev.contact.title, [field]: value }
+        }
+      };
+    });
   };
 
-  const updateFormField = (field, value) => {
-    setPortfolioData(prev => ({
-      ...prev,
-      contact: {
-        ...prev.contact,
-        formFields: { ...prev.contact.formFields, [field]: value }
-      }
-    }));
+  const updateFormField = (field: string, value: string) => {
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          formFields: { ...prev.contact.formFields, [field]: value }
+        }
+      };
+    });
   };
 
-  const updateInfoItem = (index, field, value) => {
-    const newInfo = [...portfolioData.contact.info];
-    newInfo[index] = { ...newInfo[index], [field]: value };
-    setPortfolioData(prev => ({
-      ...prev,
-      contact: { ...prev.contact, info: newInfo }
-    }));
+  const updateInfoItem = (index: number, field: string, value: string) => {
+    setData(prev => {
+      if (!prev) return prev;
+      const newInfo = [...prev.contact.info];
+      newInfo[index] = { ...newInfo[index], [field]: value };
+      return {
+        ...prev,
+        contact: { ...prev.contact, info: newInfo }
+      };
+    });
   };
 
   const addContactInfo = () => {
-    setPortfolioData(prev => ({
-      ...prev,
-      contact: {
-        ...prev.contact,
-        info: [
-          ...prev.contact.info,
-          {
-            icon: "FaEnvelope",
-            label: "New Contact",
-            value: "contact@example.com",
-            subtitle: "Description here",
-          }
-        ]
-      }
-    }));
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          info: [
+            ...prev.contact.info,
+            {
+              icon: "FaEnvelope",
+              label: "New Contact",
+              value: "contact@example.com",
+              subtitle: "Description here",
+            }
+          ]
+        }
+      };
+    });
   };
 
-  const removeContactInfo = (index) => {
-    setPortfolioData(prev => ({
-      ...prev,
-      contact: {
-        ...prev.contact,
-        info: prev.contact.info.filter((_, i) => i !== index)
-      }
-    }));
+  const removeContactInfo = (index: number) => {
+    setData(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          info: prev.contact.info.filter((_, i) => i !== index)
+        }
+      };
+    });
   };
 
-  const duplicateContactInfo = (index) => {
-    const itemToDuplicate = { ...portfolioData.contact.info[index] };
-    setPortfolioData(prev => ({
-      ...prev,
-      contact: {
-        ...prev.contact,
-        info: [...prev.contact.info, { ...itemToDuplicate, label: `${itemToDuplicate.label} (Copy)` }]
-      }
-    }));
+  const duplicateContactInfo = (index: number) => {
+    setData(prev => {
+      if (!prev) return prev;
+      const itemToDuplicate = { ...prev.contact.info[index] };
+      return {
+        ...prev,
+        contact: {
+          ...prev.contact,
+          info: [...prev.contact.info, { ...itemToDuplicate, label: `${itemToDuplicate.label} (Copy)` }]
+        }
+      };
+    });
   };
 
-  const handleSave = () => {
-    const dataStr = JSON.stringify(portfolioData, null, 2);
-    console.log('Contact Data:', dataStr);
-    alert('Data saved! Check console for export code.');
+  const handleSave = async () => {
+    if (!data) return;
+    try {
+      console.log("💾 Saving contact data:", data.contact);
+      await updateHero(data);
+      alert('Contact data updated successfully!');
+    } catch (error) {
+      console.error("❌ Save error:", error);
+      alert('Error saving contact data!');
+    }
   };
 
   const availableIcons = [
@@ -172,7 +195,7 @@ export default function ContactEditor() {
                   : 'bg-white/5 text-white hover:bg-white/10'
               }`}
             >
-              Contact Info ({portfolioData.contact.info.length})
+              Contact Info ({contactData.info.length})
             </button>
             <button
               onClick={() => setShowPreview(!showPreview)}
@@ -193,7 +216,7 @@ export default function ContactEditor() {
                       <label className="block text-white/80 font-medium mb-2 text-sm">First Part</label>
                       <input
                         type="text"
-                        value={portfolioData.contact.title.first}
+                        value={contactData.title.first}
                         onChange={(e) => updateTitleField('first', e.target.value)}
                         className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
@@ -202,7 +225,7 @@ export default function ContactEditor() {
                       <label className="block text-white/80 font-medium mb-2 text-sm">Second Part (Highlighted)</label>
                       <input
                         type="text"
-                        value={portfolioData.contact.title.second}
+                        value={contactData.title.second}
                         onChange={(e) => updateTitleField('second', e.target.value)}
                         className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
@@ -213,7 +236,7 @@ export default function ContactEditor() {
                 <div>
                   <label className="block text-white font-medium mb-2">Subtitle</label>
                   <textarea
-                    value={portfolioData.contact.subtitle}
+                    value={contactData.subtitle}
                     onChange={(e) => updateHeaderField('subtitle', e.target.value)}
                     rows={3}
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -227,7 +250,7 @@ export default function ContactEditor() {
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white/80">
                     <div>
-                      <div className="text-2xl font-bold text-purple-300">{portfolioData.contact.info.length}</div>
+                      <div className="text-2xl font-bold text-purple-300">{contactData.info.length}</div>
                       <div className="text-sm">Contact Methods</div>
                     </div>
                     <div>
@@ -236,7 +259,7 @@ export default function ContactEditor() {
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-blue-300">
-                        {portfolioData.contact.title.first.length + portfolioData.contact.title.second.length}
+                        {contactData.title.first.length + contactData.title.second.length}
                       </div>
                       <div className="text-sm">Title Characters</div>
                     </div>
@@ -257,7 +280,7 @@ export default function ContactEditor() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {portfolioData.contact.info.map((item, index) => {
+                  {contactData.info.map((item, index) => {
                     const IconComponent = iconMap[item.icon];
                     return (
                       <div
@@ -343,7 +366,7 @@ export default function ContactEditor() {
               <div className="mt-6 p-4 bg-black/30 rounded-lg border border-white/20">
                 <h3 className="text-white font-bold mb-3">Preview JSON:</h3>
                 <pre className="text-green-400 text-sm overflow-auto max-h-96 bg-black/50 p-4 rounded">
-                  {JSON.stringify(portfolioData, null, 2)}
+                  {JSON.stringify(data.contact, null, 2)}
                 </pre>
               </div>
             )}

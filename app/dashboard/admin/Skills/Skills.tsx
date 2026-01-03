@@ -1,91 +1,80 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash2, Eye, EyeOff, Code2, Image } from 'lucide-react';
+import { useHero } from "../../../hooks/useHero";
+import { HeroData } from "../../../types/dataTypes";
+
 
 export default function SkillsEditor() {
-  const [portfolioData, setPortfolioData] = useState({
-    skills: {
-      title: "Skills",
-      subtitle: "The skills, tools and technologies I am really good at:",
-      items: [
-        { name: "Javascript", icon: "https://skillicons.dev/icons?i=js" },
-        { name: "Typescript", icon: "https://skillicons.dev/icons?i=ts" },
-        { name: "React", icon: "https://skillicons.dev/icons?i=react" },
-        { name: "Next.js", icon: "https://skillicons.dev/icons?i=nextjs" },
-        { name: "Node.js", icon: "https://skillicons.dev/icons?i=nodejs" },
-        { name: "Express.js", icon: "https://skillicons.dev/icons?i=express" },
-        { name: "PostgreSQL", icon: "https://skillicons.dev/icons?i=postgres" },
-        { name: "MongoDB", icon: "https://skillicons.dev/icons?i=mongodb" },
-        { name: "Sass/Scss", icon: "https://skillicons.dev/icons?i=sass" },
-        { name: "Tailwindcss", icon: "https://skillicons.dev/icons?i=tailwind" },
-        { name: "Bootstrap", icon: "https://skillicons.dev/icons?i=bootstrap" },
-        { name: "Figma", icon: "https://skillicons.dev/icons?i=figma" },
-        { name: "Git", icon: "https://skillicons.dev/icons?i=git" },
-        { name: "GitHub", icon: "https://skillicons.dev/icons?i=github" },
-        { name: "JQuery", icon: "https://skillicons.dev/icons?i=jquery" },
-        { name: "Docker", icon: "https://skillicons.dev/icons?i=docker" },
-        { name: "Redux", icon: "https://skillicons.dev/icons?i=redux" },
-        { name: "Prisma", icon: "https://skillicons.dev/icons?i=prisma" },
-        { name: "Firebase", icon: "https://skillicons.dev/icons?i=firebase" },
-        { name: "Ps", icon: "https://skillicons.dev/icons?i=ps" },
-        { name: "Ai", icon: "https://skillicons.dev/icons?i=ai" },
-        { name: "XD", icon: "https://skillicons.dev/icons?i=xd" },
-        { name: "kali", icon: "https://skillicons.dev/icons?i=kali" },
-        { name: "Flowbite", icon: "https://flowbite.com/images/logo.svg" },
-        { name: "shadcn", icon: "https://ui.shadcn.com/apple-touch-icon.png" },
-      ]
-    }
-  });
+// ১. ভেরিয়েবল নামগুলো হুকের রিটার্ন টাইপ অনুযায়ী ঠিক করা হলো
+  const { data, loading, error, updateHero } = useHero(); 
+  const [portfolioData, setPortfolioData] = useState<HeroData | null>(null);
 
   const [activeSection, setActiveSection] = useState('header');
   const [showPreview, setShowPreview] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const updateHeaderField = (field, value) => {
+  // ২. ডাইনামিক ডেটা সিঙ্ক (data চেক করা হচ্ছে)
+  useEffect(() => {
+    if (data) {
+      setPortfolioData(data);
+    }
+  }, [data]);
+
+  // ৩. লোডিং এবং এরর হ্যান্ডলিং
+  if (loading || !portfolioData) {
+    return <div className="text-white text-center p-10">Loading Dynamic Data...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-400 text-center p-10">Error loading data!</div>;
+  }
+
+  const updateHeaderField = (field: string, value: string) => {
     setPortfolioData(prev => ({
-      ...prev,
-      skills: { ...prev.skills, [field]: value }
+      ...prev!,
+      skills: { ...prev!.skills, [field]: value }
     }));
   };
 
-  const updateSkillItem = (index, field, value) => {
+  const updateSkillItem = (index: number, field: string, value: string) => {
     const newItems = [...portfolioData.skills.items];
     newItems[index] = { ...newItems[index], [field]: value };
     setPortfolioData(prev => ({
-      ...prev,
-      skills: { ...prev.skills, items: newItems }
+      ...prev!,
+      skills: { ...prev!.skills, items: newItems }
     }));
   };
 
   const addSkill = () => {
     setPortfolioData(prev => ({
-      ...prev,
+      ...prev!,
       skills: {
-        ...prev.skills,
+        ...prev!.skills,
         items: [
           { name: "New Skill", icon: "https://skillicons.dev/icons?i=vscode" },
-          ...prev.skills.items
+          ...prev!.skills.items
         ]
       }
     }));
   };
 
-  const removeSkill = (index) => {
+  const removeSkill = (index: number) => {
     setPortfolioData(prev => ({
-      ...prev,
+      ...prev!,
       skills: {
-        ...prev.skills,
-        items: prev.skills.items.filter((_, i) => i !== index)
+        ...prev!.skills,
+        items: prev!.skills.items.filter((_, i) => i !== index)
       }
     }));
   };
 
-  const duplicateSkill = (index) => {
+  const duplicateSkill = (index: number) => {
     const skillToDuplicate = { ...portfolioData.skills.items[index] };
     setPortfolioData(prev => ({
-      ...prev,
+      ...prev!,
       skills: {
-        ...prev.skills,
-        items: [...prev.skills.items, { ...skillToDuplicate, name: `${skillToDuplicate.name} (Copy)` }]
+        ...prev!.skills,
+        items: [...prev!.skills.items, { ...skillToDuplicate, name: `${skillToDuplicate.name} (Copy)` }]
       }
     }));
   };
@@ -99,25 +88,29 @@ export default function SkillsEditor() {
         icon: `https://skillicons.dev/icons?i=${name.trim().toLowerCase()}`
       }));
       setPortfolioData(prev => ({
-        ...prev,
+        ...prev!,
         skills: {
-          ...prev.skills,
-          items: [...newSkills, ...prev.skills.items]
+          ...prev!.skills,
+          items: [...newSkills, ...prev!.skills.items]
         }
       }));
     }
   };
 
-  const handleSave = () => {
-    const dataStr = JSON.stringify(portfolioData, null, 2);
-    console.log('Skills Data:', dataStr);
-    alert('Data saved! Check console for export code.');
+  const handleSave = async () => {
+    try {
+      // এখানে সরাসরি হুকের updateHero ফাংশনটি কল করা যাবে
+      await updateHero(portfolioData);
+      alert('Data updated successfully!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save data.');
+    }
   };
 
   const filteredSkills = portfolioData.skills.items.filter(skill =>
     skill.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
       <div className="max-w-7xl mx-auto">
