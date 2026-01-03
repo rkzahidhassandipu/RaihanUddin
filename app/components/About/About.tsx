@@ -18,8 +18,10 @@ export default function AboutMe() {
   const { data, loading, error } = useHero();
 
   // Wait for data
-  if (loading) return <p className="text-white text-center mt-20">Loading...</p>;
-  if (error || !data?.about) return <p className="text-white text-center mt-20">Failed to load data</p>;
+  if (loading)
+    return <p className="text-white text-center mt-20">Loading...</p>;
+  if (error || !data?.about)
+    return <p className="text-white text-center mt-20">Failed to load data</p>;
 
   const about = data.about;
 
@@ -44,8 +46,11 @@ export default function AboutMe() {
               {about.journeyTitle}
             </h3>
 
-            {about?.journeyParagraphs?.map((para, idx) => (
-              <p key={idx} className="text-gray-300 mb-4 text-sm sm:text-base leading-relaxed">
+            {about?.journeyParagraphs?.map((para: string, idx: number) => (
+              <p
+                key={idx}
+                className="text-gray-300 mb-4 text-sm sm:text-base leading-relaxed"
+              >
                 {para}
               </p>
             ))}
@@ -60,7 +65,9 @@ export default function AboutMe() {
                   <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mb-4 text-white">
                     {getIcon(item.iconName)}
                   </div>
-                  <h2 className="text-white font-bold text-xl mb-2">{item.title}</h2>
+                  <h2 className="text-white font-bold text-xl mb-2">
+                    {item.title}
+                  </h2>
                   <p className="text-white/70 mb-3 text-sm">{item.desc}</p>
                   <ul className="list-disc list-inside space-y-1 text-white/60 text-xs sm:text-sm">
                     {item.points.map((point, i) => (
