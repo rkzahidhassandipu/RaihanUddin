@@ -24,7 +24,7 @@ export default function AboutMe() {
   const about = data.about;
 
   return (
-    <section id="about" className="relative py-16 px-4 sm:px-6 md:px-8 bg-black">
+    <section id="about" className="relative py-20 bg-black">
       <div className="relative z-10 w-4/5 mx-auto rounded-xl">
         {/* Heading */}
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-2 text-red-400">

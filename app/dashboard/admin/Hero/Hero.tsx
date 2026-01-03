@@ -136,21 +136,31 @@ export default function Hero() {
   };
 
   // Save
-  const handleSave = async () => {
-    if (!portfolioData._id) return alert("Cannot save: Hero ID missing");
-    setSaving(true);
-    try {
-      const updated = await updateHero(portfolioData);
-      // Update local state with response to prevent input clearing
-      setPortfolioData(updated);
+  // Save
+const handleSave = async () => {
+  if (!portfolioData._id) return alert("Cannot save: Hero ID missing");
+  
+  setSaving(true);
+  try {
+    const response = await updateHero(portfolioData);
+    
+    // Check if the response is a MongoDB result or the actual data
+    // If it has 'acknowledged', it's just a status report, so DON'T 
+    // overwrite your state with it.
+    if (response && response.acknowledged) {
       alert("Portfolio updated successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update portfolio. Check console.");
-    } finally {
-      setSaving(false);
+    } else if (response && response._id) {
+      // If your API returns the updated document, sync it
+      setPortfolioData(response);
+      alert("Portfolio updated successfully!");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update portfolio. Check console.");
+  } finally {
+    setSaving(false);
+  }
+};
 
   if (loading) return <p className="text-white">Loading...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;

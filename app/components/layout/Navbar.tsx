@@ -6,6 +6,7 @@ import { Link as ScrollLink } from "react-scroll";
 import { HiMenu, HiX } from "react-icons/hi";
 import { FaDownload } from "react-icons/fa";
 import { Instagram, Linkedin, Twitter, Facebook } from "lucide-react";
+import Logo from "./logo/Logo";
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState<boolean>(false);
@@ -18,7 +19,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   const navLinks: { name: string; to: string }[] = [
-    { name: "Home", to: "home" },
+    { name: "Home", to: "hero" },
     { name: "About", to: "about" },
     { name: "Projects", to: "projects" },
     { name: "Skills", to: "skills" },
@@ -50,14 +51,7 @@ const Navbar: React.FC = () => {
     >
       <div className="w-full max-w-[95%] lg:max-w-[90%] mx-auto flex justify-between items-center py-4 px-6">
         {/* Logo */}
-        <div className="flex items-center">
-          <h1 className="text-2xl font-bold text-[#FF5757] flex items-center gap-2">
-            <div className="w-10 h-10 bg-[#FF5757] rounded-full flex items-center justify-center">
-              <span className="text-white text-xl font-bold">R</span>
-            </div>
-            <span className="text-white">Reeni</span>
-          </h1>
-        </div>
+        <Logo />
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex justify-center flex-1">

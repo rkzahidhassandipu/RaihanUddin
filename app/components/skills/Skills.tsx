@@ -40,8 +40,9 @@ export default function SkillsSection() {
 
   return (
     <section 
+      id="skills"
       ref={sectionRef} 
-      className="bg-black py-20 px-4 transition-colors"
+      className="bg-black py-20 transition-colors"
     >
       <div className="w-4/5 mx-auto text-center" ref={triggerRef}>
         <h2 className="text-3xl sm:text-4xl font-bold text-center text-red-500 mb-2">

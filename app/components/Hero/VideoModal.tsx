@@ -1,9 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaPlay } from "react-icons/fa";
+import * as FaIcons from "react-icons/fa"; // Pura library import korlam
 
-const VideoModal = ({ videoLink, videoIcon }) => {
+/**
+ * Dynamic Icon Helper:
+ * String name ke real Component e convert korbe.
+ */
+const DynamicIcon = ({ name }: { name: string }) => {
+  const iconName = name?.trim();
+  const IconComponent = (FaIcons as any)[iconName];
+  
+  if (!IconComponent) {
+    return null; // Icon na thakle kicu dekhabe na
+  }
+  return <IconComponent />;
+};
+
+const VideoModal = ({ videoLink, videoIcon }: { videoLink: string; videoIcon: any[] }) => {
   const [showVideo, setShowVideo] = useState(false);
 
   const openVideo = () => setShowVideo(true);
@@ -11,32 +25,43 @@ const VideoModal = ({ videoLink, videoIcon }) => {
 
   return (
     <>
-      <button
-        onClick={openVideo}
-        className="flex items-center gap-2 bg-[#FF5757] hover:bg-[#FF4040] px-5 py-2 rounded text-white font-semibold text-sm sm:text-base shadow-lg mx-auto md:mx-0"
-      >
-        {videoIcon.map((item, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <span>{item.icon}</span>
+      {/* Button with Dynamic Icons from Admin Panel */}
+      <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+        {videoIcon?.map((item, index) => (
+          <button
+            key={index}
+            onClick={openVideo}
+            className="flex items-center gap-2 bg-[#FF5757] hover:bg-[#FF4040] px-5 py-2 rounded text-white font-semibold text-sm sm:text-base shadow-lg transition-all active:scale-95"
+          >
+            {/* Dynamic Icon ekhane call kora hoyeche */}
+            <DynamicIcon name={item.icon} />
             <span>{item.text}</span>
-          </div>
+          </button>
         ))}
-      </button>
+      </div>
 
+      {/* Video Modal Overlay */}
       {showVideo && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4">
-          <div className="relative w-full max-w-3xl aspect-video">
+        <div 
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center px-4 backdrop-blur-sm"
+          onClick={closeVideo} // Bahire click korle close hobe
+        >
+          <div 
+            className="relative w-full max-w-4xl aspect-video shadow-2xl"
+            onClick={(e) => e.stopPropagation()} // Video r bhitor click korle jeno bondho na hoy
+          >
             <iframe
-              className="w-full h-full rounded-lg"
-              src={videoLink}
+              className="w-full h-full rounded-lg border-2 border-white/10"
+              src={videoLink.replace("watch?v=", "embed/")} // YouTube link fix korar jonno
               title="Intro Video"
-              allow="autoplay; encrypted-media"
+              allow="autoplay; encrypted-media; fullscreen"
               frameBorder="0"
               allowFullScreen
             ></iframe>
+            
             <button
               onClick={closeVideo}
-              className="absolute top-2 right-2 text-white text-xl bg-red-600 hover:bg-red-700 rounded-full px-3 py-1"
+              className="absolute -top-12 right-0 text-white text-2xl bg-white/10 hover:bg-red-600 rounded-full w-10 h-10 flex items-center justify-center transition-colors"
             >
               ✕
             </button>

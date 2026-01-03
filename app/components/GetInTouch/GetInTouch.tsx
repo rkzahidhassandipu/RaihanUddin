@@ -50,7 +50,7 @@ const GetInTouch = () => {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative text-white py-20 px-4 bg-black"
+      className="relative text-white py-20 bg-black"
     >
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-red-500/10 blur-[120px] rounded-full" />

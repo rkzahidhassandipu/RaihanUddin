@@ -4,6 +4,18 @@ import BgTextAnimation from "./BgTextAnimation";
 import VideoModal from "./VideoModal";
 import { TypeAnimation } from "react-type-animation";
 import { useHero } from "@/app/hooks/useHero";
+import * as FaIcons from "react-icons/fa";
+
+const DynamicIcon = ({ name }: { name: string }) => {
+  // Clean the string (remove extra spaces)
+  const iconName = name?.trim();
+  const IconComponent = (FaIcons as any)[iconName];
+  
+  if (!IconComponent) {
+    return <span className="text-[10px] text-gray-500">No Icon</span>;
+  }
+  return <IconComponent className="text-xl" />;
+};
 
 export default function Hero() {
   const { data, loading, error } = useHero();
@@ -14,12 +26,16 @@ export default function Hero() {
 
   const { hero, about } = data;
 
+  // Prepare sequence for animation
+  const typeSequence = hero.roles.flatMap((role: string) => [role, 2000]);
+
   return (
     <div
+    id="hero"
       className="min-h-screen text-white relative overflow-hidden bg-cover bg-center"
       style={{ backgroundImage: `url('${hero.bgImage}')` }}
     >
-      <div className="w-4/5 mx-auto px-6 lg:px-12 min-h-screen flex items-center relative">
+      <div className="w-4/5 mx-auto min-h-screen flex items-center relative">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-12 items-center w-full relative z-10">
           
           {/* Left Content */}
@@ -27,7 +43,7 @@ export default function Hero() {
             <p className="text-gray-400 text-xs tracking-[0.3em] uppercase font-medium">{hero.greeting}</p>
             <h1 className="text-[3rem] lg:text-[2.7rem] xl:text-[3.2rem] font-bold leading-[0.95] tracking-tight">{hero.name}</h1>
             <TypeAnimation
-              sequence={hero.roles}
+              sequence={typeSequence}
               wrapper="h2"
               speed={5}
               className="text-xl sm:text-2xl font-semibold text-red-600"
@@ -54,14 +70,19 @@ export default function Hero() {
             <p className="text-gray-400 leading-relaxed text-base">{about.description}</p>
 
             <p className="text-sm text-gray-400 mb-5 font-medium">{about.socialLabel}</p>
+            
+            {/* FIXED SECTION: Mapping over the socials array */}
             <div className="flex gap-3">
-              {about.socials.map((social, index) => (
+              {about.socials?.map((social: any, index: number) => (
                 <a
                   key={index}
                   href={social.link}
-                  className="w-11 h-11 bg-[#1a1a1a] rounded-md flex items-center justify-center hover:bg-[#2a2a2a] transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-[#1a1a1a] text-3xl rounded-md flex items-center justify-center hover:bg-red-600 transition-colors"
                 >
-                  {social.icon}
+                  {/* Using social.platform OR social.icon based on your JSON */}
+                  <DynamicIcon name={social.platform || social.icon} />
                 </a>
               ))}
             </div>

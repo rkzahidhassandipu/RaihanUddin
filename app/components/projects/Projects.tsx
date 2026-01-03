@@ -49,7 +49,7 @@ const Projects = () => {
     return <p className="text-center text-white mt-20">Failed to load projects.</p>;
 
   return (
-    <section id="projects" className="relative bg-black text-white py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section id="projects" className="relative py-20 bg-black text-white overflow-hidden">
       {/* Background Images */}
       <div
         className="absolute top-0 left-0 w-1/2 h-1/2 bg-cover bg-left-top z-0 opacity-30 pointer-events-none"
