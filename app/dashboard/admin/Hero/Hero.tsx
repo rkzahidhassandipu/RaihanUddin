@@ -1,132 +1,159 @@
-import React, { useState } from 'react';
-import { Save, Plus, Trash2, Eye, EyeOff } from 'lucide-react';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Save, Plus, Trash2, Eye, EyeOff } from "lucide-react";
+import { useHero } from "../../../hooks/useHero";
+import { HeroData } from "../../../types/dataTypes";
 
 export default function Hero() {
-  const [portfolioData, setPortfolioData] = useState({
+  const { data: fetchedData, loading, error, updateHero } = useHero();
+  const [portfolioData, setPortfolioData] = useState<HeroData>({
+    _id: "",
     hero: {
-      greeting: "HELLO, I am",
-      name: "Raihan Uddin",
-      roles: [
-        "Full Stack Developer", 2000,
-        "MERN Stack Developer", 2000,
-        "React Enthusiast", 2000,
-        "Node.js Backend Builder", 2000,
-        "Graphic Designer", 2000,
-        "Printing design and social design", 2000,
-      ],
-      bgScrollingText: "Full Stack Developer",
-      profileImg: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&h=900&fit=crop&crop=faces",
-      bgImage: "https://i.postimg.cc/htkH77KF/banner-background-one.jpg",
-      videoUrl: "https://www.youtube.com/embed/qzxW7iMQbKQ",
-      buttons: [
-        { text: "Watch Intro", icon: "FaPlay" },
-      ]
+      greeting: "",
+      name: "",
+      roles: [],
+      bgScrollingText: "",
+      profileImg: "",
+      bgImage: "",
+      videoUrl: "",
+      buttons: [],
     },
     about: {
-      heading: "About Me.",
-      description: "A personal portfolio is a collection of your work, that is achievements, and skills that web design highlights in your growth",
-      socialLabel: "Find me on",
-      socials: [
-        { icon: "Instagram", link: "#" },
-        { icon: "Linkedin", link: "#" },
-        { icon: "Twitter", link: "#" },
-        { icon: "Facebook", link: "#" },
-      ]
-    }
+      heading: "",
+      description: "",
+      socialLabel: "",
+      socials: [],
+    },
   });
-
-  const [activeSection, setActiveSection] = useState('hero');
+  const [activeSection, setActiveSection] = useState("hero");
   const [showPreview, setShowPreview] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Update hero fields
-  const updateHeroField = (field, value) => {
-    setPortfolioData(prev => ({
-      ...prev,
-      hero: { ...prev.hero, [field]: value }
-    }));
-  };
+  // Only set fetchedData on initial load
+  useEffect(() => {
+    if (fetchedData && portfolioData._id === "") {
+      setPortfolioData(fetchedData);
+    }
+  }, [fetchedData]);
 
-  // Update roles (paired text-delay)
-  const updateRole = (index, value) => {
-    const newRoles = [...portfolioData.hero.roles];
-    newRoles[index] = value;
-    setPortfolioData(prev => ({
+  // HERO field updates
+  const updateHeroField = (field: string, value: any) => {
+    setPortfolioData((prev) => ({
       ...prev,
-      hero: { ...prev.hero, roles: newRoles }
+      hero: { ...prev.hero, [field]: value },
     }));
   };
 
   const addRole = () => {
-    setPortfolioData(prev => ({
+    setPortfolioData((prev) => ({
+      ...prev,
+      hero: { ...prev.hero, roles: [...prev.hero.roles, "New Role"] },
+    }));
+  };
+
+  const updateRole = (index: number, value: string) => {
+    const newRoles = [...portfolioData.hero.roles];
+    newRoles[index] = value;
+    setPortfolioData((prev) => ({
+      ...prev,
+      hero: { ...prev.hero, roles: newRoles },
+    }));
+  };
+
+  const removeRole = (index: number) => {
+    const newRoles = portfolioData.hero.roles.filter((_, i) => i !== index);
+    setPortfolioData((prev) => ({
+      ...prev,
+      hero: { ...prev.hero, roles: newRoles },
+    }));
+  };
+
+  const addButton = () => {
+    setPortfolioData((prev) => ({
       ...prev,
       hero: {
         ...prev.hero,
-        roles: [...prev.hero.roles, "New Role", 2000]
-      }
+        buttons: [...prev.hero.buttons, { text: "New Button", icon: "FaPlay" }],
+      },
     }));
   };
 
-  const removeRole = (index) => {
-    const newRoles = portfolioData.hero.roles.filter((_, i) => 
-      i !== index && i !== index + 1
-    );
-    setPortfolioData(prev => ({
+  const updateButton = (
+    index: number,
+    field: "text" | "icon",
+    value: string
+  ) => {
+    const newButtons = [...portfolioData.hero.buttons];
+    newButtons[index] = { ...newButtons[index], [field]: value };
+    setPortfolioData((prev) => ({
       ...prev,
-      hero: { ...prev.hero, roles: newRoles }
+      hero: { ...prev.hero, buttons: newButtons },
     }));
   };
 
-  // Update about fields
-  const updateAboutField = (field, value) => {
-    setPortfolioData(prev => ({
+  const removeButton = (index: number) => {
+    const newButtons = portfolioData.hero.buttons.filter((_, i) => i !== index);
+    setPortfolioData((prev) => ({
       ...prev,
-      about: { ...prev.about, [field]: value }
+      hero: { ...prev.hero, buttons: newButtons },
     }));
   };
 
-  // Update socials
-  const updateSocial = (index, field, value) => {
+  // ABOUT field updates
+  const updateAboutField = (field: string, value: any) => {
+    setPortfolioData((prev) => ({
+      ...prev,
+      about: { ...prev.about, [field]: value },
+    }));
+  };
+
+  const updateSocial = (index: number, field: string, value: string) => {
     const newSocials = [...portfolioData.about.socials];
     newSocials[index] = { ...newSocials[index], [field]: value };
-    setPortfolioData(prev => ({
+    setPortfolioData((prev) => ({
       ...prev,
-      about: { ...prev.about, socials: newSocials }
+      about: { ...prev.about, socials: newSocials },
     }));
   };
 
   const addSocial = () => {
-    setPortfolioData(prev => ({
+    setPortfolioData((prev) => ({
       ...prev,
       about: {
         ...prev.about,
-        socials: [...prev.about.socials, { icon: "NewIcon", link: "#" }]
-      }
+        socials: [...prev.about.socials, { icon: "NewIcon", link: "#" }],
+      },
     }));
   };
 
-  const removeSocial = (index) => {
-    setPortfolioData(prev => ({
+  const removeSocial = (index: number) => {
+    const newSocials = portfolioData.about.socials.filter((_, i) => i !== index);
+    setPortfolioData((prev) => ({
       ...prev,
-      about: {
-        ...prev.about,
-        socials: prev.about.socials.filter((_, i) => i !== index)
-      }
+      about: { ...prev.about, socials: newSocials },
     }));
   };
 
-  const handleSave = () => {
-    const dataStr = JSON.stringify(portfolioData, null, 2);
-    console.log('Portfolio Data:', dataStr);
-    alert('Data saved! Check console for export code.');
+  // Save
+  const handleSave = async () => {
+    if (!portfolioData._id) return alert("Cannot save: Hero ID missing");
+    setSaving(true);
+    try {
+      const updated = await updateHero(portfolioData);
+      // Update local state with response to prevent input clearing
+      setPortfolioData(updated);
+      alert("Portfolio updated successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update portfolio. Check console.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const roles = [];
-  for (let i = 0; i < portfolioData.hero.roles.length; i += 2) {
-    roles.push({
-      text: portfolioData.hero.roles[i],
-      delay: portfolioData.hero.roles[i + 1]
-    });
-  }
+  if (loading) return <p className="text-white">Loading...</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
@@ -141,86 +168,89 @@ export default function Hero() {
           {/* Navigation */}
           <div className="flex gap-2 p-4 bg-black/20 border-b border-white/10">
             <button
-              onClick={() => setActiveSection('hero')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                activeSection === 'hero'
-                  ? 'bg-purple-600 text-white shadow-lg'
-                  : 'bg-white/5 text-white hover:bg-white/10'
+              onClick={() => setActiveSection("hero")}
+              className={`px-6 py-2 rounded-lg font-medium ${
+                activeSection === "hero"
+                  ? "bg-purple-600 text-white shadow-lg"
+                  : "bg-white/5 text-white hover:bg-white/10"
               }`}
             >
               Hero Section
             </button>
             <button
-              onClick={() => setActiveSection('about')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                activeSection === 'about'
-                  ? 'bg-purple-600 text-white shadow-lg'
-                  : 'bg-white/5 text-white hover:bg-white/10'
+              onClick={() => setActiveSection("about")}
+              className={`px-6 py-2 rounded-lg font-medium ${
+                activeSection === "about"
+                  ? "bg-purple-600 text-white shadow-lg"
+                  : "bg-white/5 text-white hover:bg-white/10"
               }`}
             >
               About Section
             </button>
             <button
               onClick={() => setShowPreview(!showPreview)}
-              className="ml-auto px-4 py-2 bg-white/5 text-white rounded-lg hover:bg-white/10 transition-all flex items-center gap-2"
+              className="ml-auto px-4 py-2 bg-white/5 text-white rounded-lg hover:bg-white/10 flex items-center gap-2"
             >
               {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              {showPreview ? 'Hide' : 'Show'} Preview
+              {showPreview ? "Hide" : "Show"} Preview
             </button>
           </div>
 
-          <div className="p-6">
-            {/* Hero Section Editor */}
-            {activeSection === 'hero' && (
+          <div className="p-6 space-y-6">
+            {/* Hero Section */}
+            {activeSection === "hero" && (
               <div className="space-y-6">
+                {/* Greeting & Name */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white font-medium mb-2">Greeting</label>
                     <input
                       type="text"
-                      value={portfolioData.hero.greeting}
-                      onChange={(e) => updateHeroField('greeting', e.target.value)}
-                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      value={portfolioData?.hero?.greeting || ""}
+                      onChange={(e) => updateHeroField("greeting", e.target.value)}
+                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                     />
                   </div>
                   <div>
                     <label className="block text-white font-medium mb-2">Name</label>
                     <input
                       type="text"
-                      value={portfolioData.hero.name}
-                      onChange={(e) => updateHeroField('name', e.target.value)}
-                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      value={portfolioData?.hero?.name || ""}
+                      onChange={(e) => updateHeroField("name", e.target.value)}
+                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                     />
                   </div>
                 </div>
 
+                {/* Scrolling Text */}
                 <div>
                   <label className="block text-white font-medium mb-2">Background Scrolling Text</label>
                   <input
                     type="text"
-                    value={portfolioData.hero.bgScrollingText}
-                    onChange={(e) => updateHeroField('bgScrollingText', e.target.value)}
-                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={portfolioData?.hero?.bgScrollingText || ""}
+                    onChange={(e) => updateHeroField("bgScrollingText", e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
 
+                {/* Images & Video */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white font-medium mb-2">Profile Image URL</label>
                     <input
                       type="url"
-                      value={portfolioData.hero.profileImg}
-                      onChange={(e) => updateHeroField('profileImg', e.target.value)}
-                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      value={portfolioData?.hero?.profileImg || ""}
+                      onChange={(e) => updateHeroField("profileImg", e.target.value)}
+                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                     />
                   </div>
                   <div>
                     <label className="block text-white font-medium mb-2">Background Image URL</label>
                     <input
                       type="url"
-                      value={portfolioData.hero.bgImage}
-                      onChange={(e) => updateHeroField('bgImage', e.target.value)}
-                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      value={portfolioData?.hero?.bgImage || ""}
+                      onChange={(e) => updateHeroField("bgImage", e.target.value)}
+                      className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                     />
                   </div>
                 </div>
@@ -229,42 +259,74 @@ export default function Hero() {
                   <label className="block text-white font-medium mb-2">Video URL</label>
                   <input
                     type="url"
-                    value={portfolioData.hero.videoUrl}
-                    onChange={(e) => updateHeroField('videoUrl', e.target.value)}
-                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={portfolioData?.hero?.videoUrl || ""}
+                    onChange={(e) => updateHeroField("videoUrl", e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
 
+                {/* Roles */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <label className="text-white font-medium">Roles & Delays</label>
+                    <label className="text-white font-medium">Roles</label>
                     <button
                       onClick={addRole}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2 transition-all"
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2"
                     >
                       <Plus className="w-4 h-4" /> Add Role
                     </button>
                   </div>
                   <div className="space-y-3">
-                    {roles.map((role, index) => (
+                    {portfolioData?.hero?.roles?.map((role, index) => (
                       <div key={index} className="flex gap-3 items-center bg-white/5 p-3 rounded-lg">
                         <input
                           type="text"
-                          value={role.text}
-                          onChange={(e) => updateRole(index * 2, e.target.value)}
-                          placeholder="Role title"
-                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        />
-                        <input
-                          type="number"
-                          value={role.delay}
-                          onChange={(e) => updateRole(index * 2 + 1, parseInt(e.target.value))}
-                          placeholder="Delay (ms)"
-                          className="w-28 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          value={role}
+                          onChange={(e) => updateRole(index, e.target.value)}
+                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                         />
                         <button
-                          onClick={() => removeRole(index * 2)}
-                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all"
+                          onClick={() => removeRole(index)}
+                          className="p-2 bg-red-600 rounded-lg text-white"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <label className="text-white font-medium">Buttons</label>
+                    <button
+                      onClick={addButton}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" /> Add Button
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {portfolioData?.hero?.buttons?.map((btn, index) => (
+                      <div key={index} className="flex gap-3 items-center bg-white/5 p-3 rounded-lg">
+                        <input
+                          type="text"
+                          value={btn.text}
+                          onChange={(e) => updateButton(index, "text", e.target.value)}
+                          placeholder="Button text"
+                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+                        />
+                        <input
+                          type="text"
+                          value={btn?.icon}
+                          onChange={(e) => updateButton(index, "icon", e.target.value)}
+                          placeholder="Icon name"
+                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
+                        />
+                        <button
+                          onClick={() => removeButton(index)}
+                          className="p-2 bg-red-600 rounded-lg text-white"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -275,69 +337,68 @@ export default function Hero() {
               </div>
             )}
 
-            {/* About Section Editor */}
-            {activeSection === 'about' && (
+            {/* About Section */}
+            {activeSection === "about" && (
               <div className="space-y-6">
                 <div>
                   <label className="block text-white font-medium mb-2">Heading</label>
                   <input
                     type="text"
-                    value={portfolioData.about.heading}
-                    onChange={(e) => updateAboutField('heading', e.target.value)}
-                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={portfolioData?.about?.heading}
+                    onChange={(e) => updateAboutField("heading", e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
-
                 <div>
                   <label className="block text-white font-medium mb-2">Description</label>
                   <textarea
-                    value={portfolioData.about.description}
-                    onChange={(e) => updateAboutField('description', e.target.value)}
+                    value={portfolioData?.about?.description}
+                    onChange={(e) => updateAboutField("description", e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
-
                 <div>
                   <label className="block text-white font-medium mb-2">Social Label</label>
                   <input
                     type="text"
-                    value={portfolioData.about.socialLabel}
-                    onChange={(e) => updateAboutField('socialLabel', e.target.value)}
-                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    value={portfolioData?.about?.socialLabel}
+                    onChange={(e) => updateAboutField("socialLabel", e.target.value)}
+                    className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
 
+                {/* Socials */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <label className="text-white font-medium">Social Links</label>
                     <button
                       onClick={addSocial}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center gap-2 transition-all"
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2"
                     >
                       <Plus className="w-4 h-4" /> Add Social
                     </button>
                   </div>
                   <div className="space-y-3">
-                    {portfolioData.about.socials.map((social, index) => (
-                      <div key={index} className="flex gap-3 items-center bg-white/5 p-3 rounded-lg">
+                    {portfolioData?.about?.socials?.map((social, index) => (
+                      <div key={index} className="flex gap-3 items-center">
                         <input
                           type="text"
-                          value={social.icon}
-                          onChange={(e) => updateSocial(index, 'icon', e.target.value)}
+                          value={social.icon || ""}
+                          onChange={(e) => updateSocial(index, "icon", e.target.value)}
                           placeholder="Icon name"
-                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                         />
                         <input
                           type="url"
-                          value={social.link}
-                          onChange={(e) => updateSocial(index, 'link', e.target.value)}
+                          value={social?.link || ""}
+                          onChange={(e) => updateSocial(index, "link", e.target.value)}
                           placeholder="Link URL"
-                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                         />
                         <button
                           onClick={() => removeSocial(index)}
-                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all"
+                          className="p-2 bg-red-600 rounded-lg text-white"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -348,7 +409,7 @@ export default function Hero() {
               </div>
             )}
 
-            {/* Preview Section */}
+            {/* Preview */}
             {showPreview && (
               <div className="mt-6 p-4 bg-black/30 rounded-lg border border-white/20">
                 <h3 className="text-white font-bold mb-3">Preview JSON:</h3>
@@ -358,13 +419,15 @@ export default function Hero() {
               </div>
             )}
 
-            {/* Save Button */}
+            {/* Save */}
             <div className="mt-8 flex justify-end">
               <button
                 onClick={handleSave}
-                className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-xl"
+                disabled={saving || !portfolioData._id}
+                className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-lg flex items-center gap-2 disabled:opacity-50"
               >
-                <Save className="w-5 h-5" /> Save Changes
+                <Save className="w-5 h-5" />
+                {saving ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </div>

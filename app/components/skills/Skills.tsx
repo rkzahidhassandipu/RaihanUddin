@@ -3,51 +3,21 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import { portfolioData } from './your-data-path';
-export const portfolioData = {
-  // ... অন্যান্য ডাটা
-  skills: {
-    title: "Skills",
-    subtitle: "The skills, tools and technologies I am really good at:",
-    items: [
-      { name: "Javascript", icon: "https://skillicons.dev/icons?i=js" },
-      { name: "Typescript", icon: "https://skillicons.dev/icons?i=ts" },
-      { name: "React", icon: "https://skillicons.dev/icons?i=react" },
-      { name: "Next.js", icon: "https://skillicons.dev/icons?i=nextjs" },
-      { name: "Node.js", icon: "https://skillicons.dev/icons?i=nodejs" },
-      { name: "Express.js", icon: "https://skillicons.dev/icons?i=express" },
-      { name: "PostgreSQL", icon: "https://skillicons.dev/icons?i=postgres" },
-      { name: "MongoDB", icon: "https://skillicons.dev/icons?i=mongodb" },
-      { name: "Sass/Scss", icon: "https://skillicons.dev/icons?i=sass" },
-      { name: "Tailwindcss", icon: "https://skillicons.dev/icons?i=tailwind" },
-      { name: "Bootstrap", icon: "https://skillicons.dev/icons?i=bootstrap" },
-      { name: "Figma", icon: "https://skillicons.dev/icons?i=figma" },
-      { name: "Git", icon: "https://skillicons.dev/icons?i=git" },
-      { name: "GitHub", icon: "https://skillicons.dev/icons?i=github" },
-      { name: "JQuery", icon: "https://skillicons.dev/icons?i=jquery" },
-      { name: "Docker", icon: "https://skillicons.dev/icons?i=docker" },
-      { name: "Redux", icon: "https://skillicons.dev/icons?i=redux" },
-      { name: "Prisma", icon: "https://skillicons.dev/icons?i=prisma" },
-      { name: "Firebase", icon: "https://skillicons.dev/icons?i=firebase" },
-      { name: "Ps", icon: "https://skillicons.dev/icons?i=ps" },
-      { name: "Ai", icon: "https://skillicons.dev/icons?i=ai" },
-      { name: "XD", icon: "https://skillicons.dev/icons?i=xd" },
-      { name: "kali", icon: "https://skillicons.dev/icons?i=kali" },
-      { name: "Flowbite", icon: "https://flowbite.com/images/logo.svg" },
-      { name: "shadcn", icon: "https://ui.shadcn.com/apple-touch-icon.png" },
-    ]
-  }
-};
-
+import { useHero } from "@/app/hooks/useHero";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function SkillsSection() {
+  const { data, loading, error } = useHero();
   const sectionRef = useRef(null);
   const triggerRef = useRef(null);
-  const { skills } = portfolioData; // JSON থেকে ডাটা নেওয়া হচ্ছে
+
+  // Safe access: fallback to empty object/array if data not loaded
+  const skills = data?.skills || { title: "", subtitle: "", items: [] };
 
   useEffect(() => {
+    if (!skills.items.length) return; // don't run if no skills yet
+
     const ctx = gsap.context(() => {
       gsap.from(".skill-item", {
         opacity: 0,
@@ -63,7 +33,10 @@ export default function SkillsSection() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [skills.items]); // run effect when skills.items change
+
+  if (loading) return <p className="text-white text-center mt-20">Loading skills...</p>;
+  if (error) return <p className="text-white text-center mt-20">Failed to load skills.</p>;
 
   return (
     <section 

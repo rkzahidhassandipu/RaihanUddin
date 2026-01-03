@@ -2,7 +2,7 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 export const collectionNames = {
-  MY_INFO: "products"
+  MY_INFO: "myInfo"
 }
 
 const dbConnect = (next: any) => {

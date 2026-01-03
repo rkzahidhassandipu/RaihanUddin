@@ -6,101 +6,45 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  FaEnvelope,
-  FaPhoneAlt,
-  FaMapMarkerAlt,
-  FaWhatsapp,
-} from "react-icons/fa";
+import * as FaIcons from "react-icons/fa";
+import { useHero } from "@/app/hooks/useHero";
 
-// আইকন ম্যাপার (JSON এর স্ট্রিং থেকে কম্পোনেন্ট পাওয়ার জন্য)
-export const portfolioData = {
-  contact: {
-    title: {
-      first: "Get in",
-      second: "Touch",
-    },
-    subtitle:
-      "Have a project idea or want to collaborate? Feel free to reach out to me, and let's create something amazing together.",
-    formAction: "https://formspree.io/f/xknldwlr",
-    info: [
-      {
-        icon: "FaEnvelope",
-        label: "Email",
-        value: "raihanuddin.dev@gmail.com",
-        subtitle: "Send me an email anytime",
-      },
-      {
-        icon: "FaPhoneAlt",
-        label: "Phone",
-        value: "+60 115 111 0711",
-        subtitle: "Available during business hours",
-      },
-      {
-        icon: "FaWhatsapp",
-        label: "WhatsApp",
-        value: "+60 115 111 0711",
-        subtitle: "Quick replies on WhatsApp",
-      },
-      {
-        icon: "FaMapMarkerAlt",
-        label: "Location",
-        value: "Jessore, Bangladesh",
-        subtitle: "Remote work worldwide",
-      },
-    ],
-    formFields: {
-      name: "Your Name",
-      email: "Email Address",
-      subject: "Subject",
-      message: "Type your message...",
-      buttonText: "Send Message",
-    },
-  },
-};
-const IconMap: any = {
-  FaEnvelope: <FaEnvelope />,
-  FaPhoneAlt: <FaPhoneAlt />,
-  FaMapMarkerAlt: <FaMapMarkerAlt />,
-  FaWhatsapp: <FaWhatsapp />,
+// Dynamic icon component
+const Icon = ({ name }: { name: string }) => {
+  const IconComponent = (FaIcons as any)[name];
+  if (!IconComponent) return null;
+  return <IconComponent />;
 };
 
 const GetInTouch = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const { contact } = portfolioData; // JSON থেকে ডাটা নেওয়া হচ্ছে
 
+  const { data, loading, error } = useHero();
+  const contact = data?.contact;
+
+  // GSAP animations
   useEffect(() => {
+    if (!contact) return;
     const ctx = gsap.context(() => {
-      gsap.from(".contact-title", {
-        y: 40,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-      });
-
-      gsap.from(".contact-card", {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power3.out",
-      });
+      gsap.from(".contact-title", { y: 40, opacity: 0, duration: 1, ease: "power3.out" });
+      gsap.from(".contact-card", { y: 60, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" });
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [contact]);
 
-  const handleMouseMove = (
-    e: React.MouseEvent<HTMLDivElement>,
-    index: number
-  ) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
     const card = cardsRef.current[index];
     if (!card) return;
     const rect = card.getBoundingClientRect();
     card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
     card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
+
+  if (loading) return <p className="text-white text-center mt-20">Loading contact info...</p>;
+  if (error) return <p className="text-white text-center mt-20">Failed to load contact info.</p>;
+  if (!contact) return null;
 
   return (
     <section
@@ -119,11 +63,10 @@ const GetInTouch = () => {
           <span className="text-red-500">{contact.title.second}</span>
         </h2>
         <div className="h-1 w-24 bg-red-500 mx-auto mb-8 rounded-full" />
-        <p className="text-center text-sm sm:text-base text-gray-400 mt-2 mb-10">
-          {contact.subtitle}
-        </p>
+        <p className="text-center text-sm sm:text-base text-gray-400 mt-2 mb-10">{contact.subtitle}</p>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Side: Contact Info */}
+          {/* Contact Info */}
           <div
             ref={(el) => (cardsRef.current[0] = el)}
             onMouseMove={(e) => handleMouseMove(e, 0)}
@@ -132,7 +75,7 @@ const GetInTouch = () => {
             <div
               className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               style={{
-                background: `radial-gradient(1000px circle at var(--mouse-x) var(--mouse-y), rgba(239, 68, 68, 0.6), transparent 40%)`,
+                background: `radial-gradient(1000px circle at var(--mouse-x) var(--mouse-y), rgba(239,68,68,0.6), transparent 40%)`,
               }}
             />
             <Card className="relative z-10 h-full bg-[#0b0f1a] border-none rounded-2xl">
@@ -148,14 +91,12 @@ const GetInTouch = () => {
                     className="flex items-start gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-red-500/40 transition-all group/item"
                   >
                     <div className="w-10 h-10 flex flex-shrink-0 items-center justify-center rounded-lg bg-[#111827] text-red-500 border border-white/10 group-hover/item:bg-red-500 group-hover/item:text-white transition-colors">
-                      {IconMap[item.icon]}
+                      <Icon name={item.icon} />
                     </div>
                     <div>
                       <p className="font-semibold text-white">{item.label}</p>
                       <p className="text-sm text-slate-300">{item.value}</p>
-                      <p className="text-xs text-slate-500 mt-1">
-                        {item.subtitle}
-                      </p>
+                      {/* <p className="text-xs text-slate-500 mt-1">{item.subtitle}</p> */}
                     </div>
                   </div>
                 ))}
@@ -163,7 +104,7 @@ const GetInTouch = () => {
             </Card>
           </div>
 
-          {/* Right Side: Form */}
+          {/* Contact Form */}
           <div
             ref={(el) => (cardsRef.current[1] = el)}
             onMouseMove={(e) => handleMouseMove(e, 1)}
@@ -172,7 +113,7 @@ const GetInTouch = () => {
             <div
               className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               style={{
-                background: `radial-gradient(1000px circle at var(--mouse-x) var(--mouse-y), rgba(239, 68, 68, 0.6), transparent 40%)`,
+                background: `radial-gradient(1000px circle at var(--mouse-x) var(--mouse-y), rgba(239,68,68,0.6), transparent 40%)`,
               }}
             />
             <Card className="relative z-10 h-full bg-[#0b0f1a] border-none rounded-2xl">
@@ -182,11 +123,7 @@ const GetInTouch = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form
-                  action={contact.formAction}
-                  method="POST"
-                  className="flex flex-col space-y-4"
-                >
+                <form action={contact.formAction} method="POST" className="flex flex-col space-y-4">
                   <Input
                     name="name"
                     placeholder={contact.formFields.name}
@@ -212,10 +149,7 @@ const GetInTouch = () => {
                     required
                     className="bg-white/[0.03] border-white/10 text-white min-h-[180px]"
                   />
-                  <Button
-                    type="submit"
-                    className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-6 transition-all"
-                  >
+                  <Button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-6 transition-all">
                     {contact.formFields.buttonText}
                   </Button>
                 </form>
