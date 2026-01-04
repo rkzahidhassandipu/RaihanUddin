@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import * as FaIcons from "react-icons/fa";
-import { useHero } from "@/app/hooks/useHero";
+import { ContactInfo } from "@/app/types/dataTypes";
 
 // Dynamic icon component
 const Icon = ({ name }: { name: string }) => {
@@ -85,7 +85,7 @@ const GetInTouch = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {contact.info.map((item, i) => (
+                {contact.info.map((item: ContactInfo, i) => (
                   <div
                     key={i}
                     className="flex items-start gap-4 p-4 bg-white/[0.02] border border-white/5 rounded-xl hover:border-red-500/40 transition-all group/item"
