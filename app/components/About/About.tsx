@@ -2,7 +2,7 @@
 
 import { Code, Heart, User } from "lucide-react";
 import { useHero } from "@/app/hooks/useHero";
-import { AboutInterest, AboutParagraph } from "../../../types/dataTypes";
+import { AboutInterest, AboutParagraph } from "@/app/types/dataTypes";
 
 const getIcon = (iconName: string) => {
   switch (iconName) {
