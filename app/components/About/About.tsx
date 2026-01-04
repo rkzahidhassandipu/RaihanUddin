@@ -58,7 +58,7 @@ export default function AboutMe() {
 
             {/* Interest Cards Mapping */}
             <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 mt-8">
-              {about?.interests?.map((item: AboutInterest, index) => (
+              {about?.interests?.map((item: AboutInterest) => (
                 <div
                   key={item.id}
                   className="bg-gradient-to-br from-black to-red-500/20 p-6 rounded-xl border border-red-500/10 shadow-lg hover:scale-[1.02] transition-transform text-left"
