@@ -18,33 +18,35 @@ export default function TestimonialSlider() {
   };
 
   useEffect(() => {
-    if (!testimonialsSection.images.length) return; 
+    const animations: gsap.core.Tween[] = [];
 
     // Row 1: Left to Right
     if (row1Ref.current) {
       const totalWidth = row1Ref.current.scrollWidth / 2;
-      gsap.to(row1Ref.current, {
+      animations.push(gsap.to(row1Ref.current, {
         x: -totalWidth,
         duration: 35,
         ease: "none",
         repeat: -1,
-      });
+      }));
     }
 
     // Row 2: Right to Left
     if (row2Ref.current) {
       const totalWidth = row2Ref.current.scrollWidth / 2;
       gsap.set(row2Ref.current, { x: -totalWidth });
-      gsap.to(row2Ref.current, {
+      animations.push(gsap.to(row2Ref.current, {
         x: 0,
         duration: 40,
         ease: "none",
         repeat: -1,
-      });
+      }));
     }
-  }, [testimonialsSection.images]);
 
-  if (loading)
+    return () => {
+      animations.forEach(anim => anim.kill());
+    };
+  }, [testimonialsSection.images]);  if (loading)
     return <p className="text-white text-center mt-20">Loading testimonials...</p>;
   if (error)
     return <p className="text-white text-center mt-20">Failed to load testimonials.</p>;
@@ -53,11 +55,17 @@ export default function TestimonialSlider() {
     <section className="bg-black py-24 overflow-hidden">
       <div className="w-4/5 mx-auto mb-16 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-center text-red-500 mb-2 flex justify-center items-center gap-3">
-          {testimonialsSection.title.split(" ")[0]}
-          <BsFillQuestionDiamondFill className="text-red-500" />
-          {testimonialsSection.title.split(" ").slice(1).join(" ")}
-        </h2>
-        <div className="h-1 w-24 bg-gradient-to-r from-red-500 to-red-700 mx-auto rounded-full mb-8" />
+          {(() => {
+            const parts = testimonialsSection.title.split(' ');
+            const firstWord = parts[0] || '';
+            const rest = parts.slice(1).join(' ');
+            return rest ? (
+              <>{firstWord} <BsFillQuestionDiamondFill className="text-red-500" /> {rest}</>
+            ) : (
+              <>{firstWord}</>
+            );
+          })()}
+        </h2>        <div className="h-1 w-24 bg-gradient-to-r from-red-500 to-red-700 mx-auto rounded-full mb-8" />
         <p className="text-center text-sm sm:text-base text-gray-400 mt-2 mb-10">
           {testimonialsSection.subtitle}
         </p>

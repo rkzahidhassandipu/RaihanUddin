@@ -16,10 +16,21 @@ export interface Hero {
 }
 
 export interface AboutInterest {
+  id: string;
   iconName: string;
   title: string;
   desc: string;
-  points: string[];
+  points: AboutPoint[];
+}
+
+export interface AboutPoint {
+  id: string;
+  text: string;
+}
+
+export interface AboutParagraph {
+  id: string;
+  text: string;
 }
 
 export interface AboutSocial {
@@ -32,7 +43,7 @@ export interface About {
   subtitle: string;
   description: string;
   journeyTitle: string;
-  journeyParagraphs: string[];
+  journeyParagraphs: AboutParagraph[];
   socialLabel: string;
   socials: AboutSocial[];
   interests: AboutInterest[];

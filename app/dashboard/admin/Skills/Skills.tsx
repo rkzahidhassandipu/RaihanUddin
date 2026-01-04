@@ -12,6 +12,12 @@ export default function SkillsEditor() {
   const [activeSection, setActiveSection] = useState('header');
   const [showPreview, setShowPreview] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
+
+  // Clear image errors when skills items change (e.g., icons updated)
+  useEffect(() => {
+    setImageErrors(new Set());
+  }, [portfolioData?.skills?.items]);
 
   // ২. ডাইনামিক ডেটা সিঙ্ক (data চেক করা হচ্ছে)
   useEffect(() => {
@@ -240,18 +246,15 @@ export default function SkillsEditor() {
                       >
                         <div className="flex items-start gap-3">
                           <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
-                            {skill.icon ? (
+                            {skill.icon && !imageErrors.has(actualIndex) ? (
                               <img
                                 src={skill.icon}
                                 alt={skill.name}
                                 className="w-12 h-12 object-contain"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'flex';
-                                }}
+                                onError={() => setImageErrors(prev => new Set(prev).add(actualIndex))}
                               />
                             ) : null}
-                            <div className="hidden w-full h-full items-center justify-center">
+                            <div className={`${imageErrors.has(actualIndex) ? 'flex' : 'hidden'} w-full h-full items-center justify-center`}>
                               <Image className="w-8 h-8 text-white/30" />
                             </div>
                           </div>

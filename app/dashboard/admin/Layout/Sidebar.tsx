@@ -1,5 +1,5 @@
 'use client'
-import { LayoutDashboard, Image, Folder, Settings   } from 'lucide-react';
+import { LayoutDashboard, Image, Folder, Settings, Star, Phone   } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: 'hero' | 'about' | 'projects' | "skills" | 'testimonials' | 'contact_info';
@@ -10,11 +10,10 @@ const menu = [
   { key: 'hero', label: 'Hero Section', icon: Image },
   { key: 'about', label: 'About Section', icon: LayoutDashboard },
   { key: 'projects', label: 'Projects', icon: Folder },
-  { key: 'skills', label: 'Skills', icon: Settings  },
+  { key: 'skills', label: 'Skills', icon: Star  },
   { key: 'testimonials', label: 'Testimonials', icon: Settings  },
-  { key: 'contact_info', label: 'Contact Info', icon: Settings  },
+  { key: 'contact_info', label: 'Contact Info', icon: Phone  },
 ] as const;
-
 const Sidebar = ({ activeTab, setActiveTab }: SidebarProps) => {
   return (
     <aside className="w-64 border-r border-slate-800 bg-slate-900 px-4 py-6">

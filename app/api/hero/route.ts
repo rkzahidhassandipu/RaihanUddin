@@ -7,9 +7,9 @@ export async function GET() {
     const data = await collection.findOne({});
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Failed to load hero data:", error);
     return NextResponse.json(
-      { message: "Error fetching hero" },
+      { message: "Failed to load hero data" },
       { status: 500 }
     );
-  }
-}
+  }}

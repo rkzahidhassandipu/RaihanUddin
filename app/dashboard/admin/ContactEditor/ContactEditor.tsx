@@ -16,6 +16,12 @@ export default function ContactEditor() {
   const [data, setData] = useState<HeroData | null>(null);
   const [activeSection, setActiveSection] = useState('header');
   const [showPreview, setShowPreview] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Mark as mounted on client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load data from database
   useEffect(() => {
@@ -42,7 +48,7 @@ export default function ContactEditor() {
     }
   }, [dbData]);
 
-  if (loading || !data) {
+  if (!mounted || loading || !data) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-900 text-white p-10">
         <div className="animate-pulse text-xl">Loading Contact Editor...</div>
@@ -62,6 +68,7 @@ export default function ContactEditor() {
     });
   };
 
+  
   const updateTitleField = (field: string, value: string) => {
     setData(prev => {
       if (!prev) return prev;
@@ -254,10 +261,11 @@ export default function ContactEditor() {
                       <div className="text-sm">Contact Methods</div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-pink-300">5</div>
+                      <div className="text-2xl font-bold text-pink-300">
+                        {Object.keys(contactData.formFields).length}
+                      </div>
                       <div className="text-sm">Form Fields</div>
-                    </div>
-                    <div>
+                    </div>                    <div>
                       <div className="text-2xl font-bold text-blue-300">
                         {contactData.title.first.length + contactData.title.second.length}
                       </div>

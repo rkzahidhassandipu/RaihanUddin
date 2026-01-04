@@ -7,6 +7,7 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import Image from "next/image";
 
 
 
@@ -33,11 +34,12 @@ const ProjectSlider: React.FC<ProjectSliderProps> = ({ images }) => {
         className="w-full h-64 sm:h-80 custom-slider"
       >
         {images.map((img, i) => (
-          <SwiperSlide key={i}>
-            <img
+          <SwiperSlide key={i} className="relative">
+             <Image
               src={img}
               alt={`Project image ${i + 1}`}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </SwiperSlide>
         ))}

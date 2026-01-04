@@ -31,8 +31,7 @@ const Footer = () => {
         <div className="flex justify-center gap-4 text-xl">
           {[
             { icon: <FaGithub />, href: "https://github.com/rkzahidhassandipu" },
-            { icon: <FaLinkedin />, href: "https://linkedin.com/in/your-linkedin" },
-            { icon: <FaBehance />, href: "https://www.behance.net/rkzahidhassandipu" },
+            { icon: <FaLinkedin />, href: "https://linkedin.com/in/rkzahidhassandipu" },            { icon: <FaBehance />, href: "https://www.behance.net/rkzahidhassandipu" },
             { icon: <FaEnvelope />, href: "mailto:rkrazzakhan01731@gmail.com" },
           ].map((social, index) => (
             <a

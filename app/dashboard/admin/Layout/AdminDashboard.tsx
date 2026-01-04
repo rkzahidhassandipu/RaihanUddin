@@ -10,9 +10,14 @@ const AdminDashboard = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const tabFromUrl = searchParams.get('tab') as TabType;
-  const [activeTab, setActiveTab] = useState<TabType>(tabFromUrl || 'hero');
+  const validTabs: TabType[] = ['hero', 'about', 'projects', 'skills', 'testimonials', 'contact_info'];
 
+  const tabFromUrl = searchParams.get('tab');  const isValidTab = (tab: string | null): tab is TabType => {
+    return tab !== null && validTabs.includes(tab as TabType);
+  };
+  const [activeTab, setActiveTab] = useState<TabType>(
+    isValidTab(tabFromUrl) ? tabFromUrl : 'hero'
+  );
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
     router.replace(`/dashboard/admin?tab=${tab}`, { scroll: false });

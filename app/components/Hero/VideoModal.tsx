@@ -55,7 +55,7 @@ const VideoModal = ({ videoLink, videoIcon }: { videoLink: string; videoIcon: an
               src={videoLink.replace("watch?v=", "embed/")} // YouTube link fix korar jonno
               title="Intro Video"
               allow="autoplay; encrypted-media; fullscreen"
-              frameBorder="0"
+              style={{ border: 0 }}
               allowFullScreen
             ></iframe>
             

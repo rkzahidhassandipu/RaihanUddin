@@ -6,8 +6,7 @@ import Footer from "../components/Footer/Footer";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideNavbar = pathname?.startsWith("/dashboard/admin") || pathname?.startsWith("/admin");
-
+  const hideNavbar = pathname === "/admin" || pathname === "/dashboard/admin" || pathname?.startsWith("/admin/") || pathname?.startsWith("/dashboard/admin/");
   return (
     <>
       {!hideNavbar && <Navbar />}

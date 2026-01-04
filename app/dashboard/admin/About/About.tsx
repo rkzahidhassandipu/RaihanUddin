@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Plus, Trash2, Eye, EyeOff, Code, Heart, User } from 'lucide-react';
 import { useHero } from "../../../hooks/useHero";
-import { HeroData } from "../../../types/dataTypes";
+import { HeroData, AboutParagraph, AboutInterest, AboutPoint } from "../../../types/dataTypes";
 
 const getIcon = (iconName: string) => {
   switch (iconName) {
@@ -14,6 +14,8 @@ const getIcon = (iconName: string) => {
   }
 };
 
+const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
 export default function AboutEditor() {
   const { data: fetchedData, loading, error, updateHero } = useHero();
   const [portfolioData, setPortfolioData] = useState<HeroData | null>(null);
@@ -23,7 +25,20 @@ export default function AboutEditor() {
   // Load dynamic data into state when fetched
   useEffect(() => {
     if (fetchedData) {
-      setPortfolioData(fetchedData);
+      const data = { ...fetchedData };
+      // Ensure ids for journeyParagraphs
+      data.about.journeyParagraphs = data.about.journeyParagraphs.map((para: any) => 
+        typeof para === 'string' ? { id: generateId(), text: para } : para
+      );
+      // Ensure ids for interests
+      data.about.interests = data.about.interests.map((interest: any) => ({
+        ...interest,
+        id: interest.id || generateId(),
+        points: interest.points.map((point: any) => 
+          typeof point === 'string' ? { id: generateId(), text: point } : point
+        )
+      }));
+      setPortfolioData(data);
     }
   }, [fetchedData]);
 
@@ -51,7 +66,7 @@ export default function AboutEditor() {
   const updateParagraph = (index: number, value: string) => {
     if (!portfolioData) return;
     const newParagraphs = [...portfolioData.about.journeyParagraphs];
-    newParagraphs[index] = value;
+    newParagraphs[index] = { ...newParagraphs[index], text: value };
     setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, journeyParagraphs: newParagraphs } });
   };
 
@@ -61,7 +76,7 @@ export default function AboutEditor() {
       ...portfolioData,
       about: {
         ...portfolioData.about,
-        journeyParagraphs: [...portfolioData.about.journeyParagraphs, ""]
+        journeyParagraphs: [...portfolioData.about.journeyParagraphs, { id: generateId(), text: "" }]
       }
     });
   };
@@ -92,7 +107,7 @@ export default function AboutEditor() {
         ...portfolioData.about,
         interests: [
           ...portfolioData.about.interests,
-          { iconName: "User", title: "", desc: "", points: [""] }
+          { id: generateId(), iconName: "User", title: "", desc: "", points: [{ id: generateId(), text: "" }] }
         ]
       }
     });
@@ -112,21 +127,30 @@ export default function AboutEditor() {
   const updatePoint = (interestIndex: number, pointIndex: number, value: string) => {
     if (!portfolioData) return;
     const newInterests = [...portfolioData.about.interests];
-    newInterests[interestIndex].points[pointIndex] = value;
+    const updatedInterest = { ...newInterests[interestIndex] };
+    const newPoints = [...updatedInterest.points];
+    newPoints[pointIndex] = { ...newPoints[pointIndex], text: value };
+    updatedInterest.points = newPoints;
+    newInterests[interestIndex] = updatedInterest;
     setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, interests: newInterests } });
   };
 
   const addPoint = (interestIndex: number) => {
     if (!portfolioData) return;
     const newInterests = [...portfolioData.about.interests];
-    newInterests[interestIndex].points.push("");
+    const updatedInterest = { ...newInterests[interestIndex] };
+    const newPoints = [...updatedInterest.points];
+    newPoints.push({ id: generateId(), text: "" });
+    updatedInterest.points = newPoints;
+    newInterests[interestIndex] = updatedInterest;
     setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, interests: newInterests } });
   };
 
   const removePoint = (interestIndex: number, pointIndex: number) => {
     if (!portfolioData) return;
     const newInterests = [...portfolioData.about.interests];
-    newInterests[interestIndex].points = newInterests[interestIndex].points.filter((_, i) => i !== pointIndex);
+    const newPoints = newInterests[interestIndex].points.filter((_, i) => i !== pointIndex);
+    newInterests[interestIndex] = { ...newInterests[interestIndex], points: newPoints };
     setPortfolioData({ ...portfolioData, about: { ...portfolioData.about, interests: newInterests } });
   };
 
@@ -147,9 +171,13 @@ export default function AboutEditor() {
           </div>
 
           {/* Navigation */}
-          <div className="flex gap-2 p-4 bg-black/20 border-b border-white/10">
+          <div className="flex gap-2 p-4 bg-black/20 border-b border-white/10" role="tablist">
             <button
               onClick={() => setActiveSection('basic')}
+              role="tab"
+              aria-selected={activeSection === 'basic'}
+              aria-controls="basic-panel"
+              id="basic-tab"
               className={`px-6 py-2 rounded-lg font-medium transition-all ${
                 activeSection === 'basic'
                   ? 'bg-purple-600 text-white shadow-lg'
@@ -160,6 +188,10 @@ export default function AboutEditor() {
             </button>
             <button
               onClick={() => setActiveSection('journey')}
+              role="tab"
+              aria-selected={activeSection === 'journey'}
+              aria-controls="journey-panel"
+              id="journey-tab"
               className={`px-6 py-2 rounded-lg font-medium transition-all ${
                 activeSection === 'journey'
                   ? 'bg-purple-600 text-white shadow-lg'
@@ -170,6 +202,10 @@ export default function AboutEditor() {
             </button>
             <button
               onClick={() => setActiveSection('interests')}
+              role="tab"
+              aria-selected={activeSection === 'interests'}
+              aria-controls="interests-panel"
+              id="interests-tab"
               className={`px-6 py-2 rounded-lg font-medium transition-all ${
                 activeSection === 'interests'
                   ? 'bg-purple-600 text-white shadow-lg'
@@ -186,7 +222,6 @@ export default function AboutEditor() {
               {showPreview ? 'Hide' : 'Show'} Preview
             </button>
           </div>
-
           <div className="p-6">
             {/* Basic Info Section */}
             {activeSection === 'basic' && (
@@ -237,7 +272,7 @@ export default function AboutEditor() {
                 </div>
                 <div className="space-y-4">
                   {portfolioData.about.journeyParagraphs.map((para, index) => (
-                    <div key={index} className="bg-white/5 p-4 rounded-lg border border-white/10">
+                    <div key={para.id} className="bg-white/5 p-4 rounded-lg border border-white/10">
                       <div className="flex items-center justify-between mb-2">
                         <label className="text-white/70 text-sm">Paragraph {index + 1}</label>
                         <button
@@ -248,7 +283,7 @@ export default function AboutEditor() {
                         </button>
                       </div>
                       <textarea
-                        value={para}
+                        value={para.text}
                         onChange={(e) => updateParagraph(index, e.target.value)}
                         rows={4}
                         className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -273,7 +308,7 @@ export default function AboutEditor() {
                 </div>
                 <div className="space-y-6">
                   {portfolioData.about.interests.map((interest, index) => (
-                    <div key={index} className="bg-white/5 p-6 rounded-lg border border-white/10">
+                    <div key={interest.id} className="bg-white/5 p-6 rounded-lg border border-white/10">
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-white">
@@ -335,10 +370,10 @@ export default function AboutEditor() {
                           </div>
                           <div className="space-y-2">
                             {interest.points.map((point, pointIndex) => (
-                              <div key={pointIndex} className="flex gap-2 items-center">
+                              <div key={point.id} className="flex gap-2 items-center">
                                 <input
                                   type="text"
-                                  value={point}
+                                  value={point.text}
                                   onChange={(e) => updatePoint(index, pointIndex, e.target.value)}
                                   className="flex-1 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
                                 />

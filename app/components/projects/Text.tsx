@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import React, { useEffect, useRef } from "react";import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import gsap from "gsap";
 
 type Experience = {

@@ -14,11 +14,9 @@ const Content = ({ activeTab }: ContentProps) => {
     <main className="flex-1 overflow-y-auto">
       {/* Header */}
       <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-800 bg-slate-950 px-8 py-5">
-        <h2 className="text-2xl font-semibold capitalize">
-          {activeTab} Management
-        </h2>
-
-        <span className="rounded-md bg-red-500/10 px-4 py-1 text-sm text-red-400">
+        <h2 className="text-2xl font-semibold">
+          {activeTab.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} Management
+        </h2>        <span className="rounded-md bg-red-500/10 px-4 py-1 text-sm text-red-400">
           Admin
         </span>
       </header>

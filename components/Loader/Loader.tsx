@@ -1,18 +1,21 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
-export default function Loader() {
+interface LoaderProps {
+  isLoading: boolean;
+  minDisplayMs?: number;
+}
+
+export default function Loader({ isLoading, minDisplayMs = 2000 }: LoaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const tlRef = useRef<gsap.core.Timeline>();
+  const [timerFinished, setTimerFinished] = useState(false);
 
   useEffect(() => {
-    const tl = gsap.timeline({
-      onComplete: () => {
-        // Optional: Dispatch an event or update state that loading is finished
-      }
-    });
+    const tl = gsap.timeline();
 
     // Entrance: Subtle scale up of the SVG
     tl.fromTo(svgRef.current, 
@@ -20,22 +23,60 @@ export default function Loader() {
       { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }
     );
 
-    // Exit: Fade out the whole container after a short delay
-    tl.to(containerRef.current, {
-      opacity: 0,
-      pointerEvents: "none",
-      duration: 0.6,
-      delay: 2, // Keeps loader visible for at least 2 seconds
-      ease: "power2.inOut",
-    });
-  }, []);
+    tlRef.current = tl;
+
+    // Start timer for minDisplayMs
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (minDisplayMs > 0) {
+      timer = setTimeout(() => {
+        setTimerFinished(true);
+      }, minDisplayMs);
+    } else {
+      setTimerFinished(true);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      if (tlRef.current) tlRef.current.kill();
+    };
+  }, [minDisplayMs]);        setTimerFinished(true);
+      }
+    }
+  }, [isLoading, minDisplayMs]);
+
+  useEffect(() => {
+    if (isLoading) {
+      // Reset container visibility
+      gsap.set(containerRef.current, { opacity: 1, pointerEvents: 'auto' });
+      // Restart entrance animation
+      if (tlRef.current) {
+        tlRef.current.restart();
+      }
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!isLoading && timerFinished) {
+      // Trigger hide animation
+      if (tlRef.current) {
+        tlRef.current.to(containerRef.current, {
+          opacity: 0,
+          pointerEvents: "none",
+          duration: 0.6,
+          ease: "power2.inOut",
+        });
+      }
+    }
+  }, [isLoading, timerFinished]);
 
   return (
     <div
       ref={containerRef}
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#030712]"
-    >
-      <div className="relative">
+      role="status"
+      aria-live="polite"
+      aria-label="Loading content"
+    >      <div className="relative">
         {/* Glow Effect behind your SVG */}
         <div className="absolute inset-0 bg-red-500/20 blur-3xl rounded-full scale-150" />
         
