@@ -68,7 +68,7 @@ const GetInTouch = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Contact Info */}
           <div
-            ref={(el) => (cardsRef.current[0] = el)}
+            ref={(el) => { cardsRef.current[0] = el; }}
             onMouseMove={(e) => handleMouseMove(e, 0)}
             className="group contact-card relative rounded-2xl p-[1.5px] bg-white/10 overflow-hidden"
           >
@@ -106,7 +106,7 @@ const GetInTouch = () => {
 
           {/* Contact Form */}
           <div
-            ref={(el) => (cardsRef.current[1] = el)}
+            ref={(el) => { cardsRef.current[1] = el; }}
             onMouseMove={(e) => handleMouseMove(e, 1)}
             className="group contact-card relative rounded-2xl p-[1.5px] bg-white/10 overflow-hidden"
           >
