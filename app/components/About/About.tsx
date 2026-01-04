@@ -2,6 +2,7 @@
 
 import { Code, Heart, User } from "lucide-react";
 import { useHero } from "@/app/hooks/useHero";
+import { AboutInterest, AboutParagraph } from "../../../types/dataTypes";
 
 const getIcon = (iconName: string) => {
   switch (iconName) {
@@ -46,20 +47,20 @@ export default function AboutMe() {
               {about.journeyTitle}
             </h3>
 
-            {about?.journeyParagraphs?.map((para: string, idx: number) => (
+            {about?.journeyParagraphs?.map((para: AboutParagraph, idx: number) => (
               <p
-                key={idx}
+                key={para.id}
                 className="text-gray-300 mb-4 text-sm sm:text-base leading-relaxed"
               >
-                {para}
+                {para.text}
               </p>
             ))}
 
             {/* Interest Cards Mapping */}
             <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 mt-8">
-              {about?.interests?.map((item, index) => (
+              {about?.interests?.map((item: AboutInterest, index) => (
                 <div
-                  key={index}
+                  key={item.id}
                   className="bg-gradient-to-br from-black to-red-500/20 p-6 rounded-xl border border-red-500/10 shadow-lg hover:scale-[1.02] transition-transform text-left"
                 >
                   <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mb-4 text-white">
@@ -70,8 +71,8 @@ export default function AboutMe() {
                   </h2>
                   <p className="text-white/70 mb-3 text-sm">{item.desc}</p>
                   <ul className="list-disc list-inside space-y-1 text-white/60 text-xs sm:text-sm">
-                    {item.points.map((point, i) => (
-                      <li key={i}>{point}</li>
+                    {item.points.map((point) => (
+                      <li key={point.id}>{point.text}</li>
                     ))}
                   </ul>
                 </div>
