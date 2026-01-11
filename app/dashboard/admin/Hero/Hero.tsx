@@ -128,7 +128,9 @@ export default function Hero() {
   };
 
   const removeSocial = (index: number) => {
-    const newSocials = portfolioData.about.socials.filter((_, i) => i !== index);
+    const newSocials = portfolioData.about.socials.filter(
+      (_, i) => i !== index
+    );
     setPortfolioData((prev) => ({
       ...prev,
       about: { ...prev.about, socials: newSocials },
@@ -137,30 +139,30 @@ export default function Hero() {
 
   // Save
   // Save
-const handleSave = async () => {
-  if (!portfolioData._id) return alert("Cannot save: Hero ID missing");
-  
-  setSaving(true);
-  try {
-    const response = await updateHero(portfolioData);
-    
-    // Check if the response is a MongoDB result or the actual data
-    // If it has 'acknowledged', it's just a status report, so DON'T 
-    // overwrite your state with it.
-    if (response && response.acknowledged) {
-      alert("Portfolio updated successfully!");
-    } else if (response && response._id) {
-      // If your API returns the updated document, sync it
-      setPortfolioData(response);
-      alert("Portfolio updated successfully!");
+  const handleSave = async () => {
+    if (!portfolioData._id) return alert("Cannot save: Hero ID missing");
+
+    setSaving(true);
+    try {
+      const response = await updateHero(portfolioData);
+
+      // Check if the response is a MongoDB result or the actual data
+      // If it has 'acknowledged', it's just a status report, so DON'T
+      // overwrite your state with it.
+      if (response && response.acknowledged) {
+        alert("Portfolio updated successfully!");
+      } else if (response && response._id) {
+        // If your API returns the updated document, sync it
+        setPortfolioData(response);
+        alert("Portfolio updated successfully!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update portfolio. Check console.");
+    } finally {
+      setSaving(false);
     }
-  } catch (err) {
-    console.error(err);
-    alert("Failed to update portfolio. Check console.");
-  } finally {
-    setSaving(false);
-  }
-};
+  };
 
   if (loading) return <p className="text-white">Loading...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
@@ -171,8 +173,12 @@ const handleSave = async () => {
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl overflow-hidden border border-white/20">
           {/* Header */}
           <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6">
-            <h1 className="text-3xl font-bold text-white mb-2">Portfolio Data Editor</h1>
-            <p className="text-purple-100">Manage your portfolio content with ease</p>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Portfolio Data Editor
+            </h1>
+            <p className="text-purple-100">
+              Manage your portfolio content with ease
+            </p>
           </div>
 
           {/* Navigation */}
@@ -201,7 +207,11 @@ const handleSave = async () => {
               onClick={() => setShowPreview(!showPreview)}
               className="ml-auto px-4 py-2 bg-white/5 text-white rounded-lg hover:bg-white/10 flex items-center gap-2"
             >
-              {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showPreview ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
               {showPreview ? "Hide" : "Show"} Preview
             </button>
           </div>
@@ -213,16 +223,22 @@ const handleSave = async () => {
                 {/* Greeting & Name */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white font-medium mb-2">Greeting</label>
+                    <label className="block text-white font-medium mb-2">
+                      Greeting
+                    </label>
                     <input
                       type="text"
                       value={portfolioData?.hero?.greeting || ""}
-                      onChange={(e) => updateHeroField("greeting", e.target.value)}
+                      onChange={(e) =>
+                        updateHeroField("greeting", e.target.value)
+                      }
                       className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-white font-medium mb-2">Name</label>
+                    <label className="block text-white font-medium mb-2">
+                      Name
+                    </label>
                     <input
                       type="text"
                       value={portfolioData?.hero?.name || ""}
@@ -234,11 +250,15 @@ const handleSave = async () => {
 
                 {/* Scrolling Text */}
                 <div>
-                  <label className="block text-white font-medium mb-2">Background Scrolling Text</label>
+                  <label className="block text-white font-medium mb-2">
+                    Background Scrolling Text
+                  </label>
                   <input
                     type="text"
                     value={portfolioData?.hero?.bgScrollingText || ""}
-                    onChange={(e) => updateHeroField("bgScrollingText", e.target.value)}
+                    onChange={(e) =>
+                      updateHeroField("bgScrollingText", e.target.value)
+                    }
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
@@ -246,31 +266,43 @@ const handleSave = async () => {
                 {/* Images & Video */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white font-medium mb-2">Profile Image URL</label>
+                    <label className="block text-white font-medium mb-2">
+                      Profile Image URL
+                    </label>
                     <input
                       type="url"
                       value={portfolioData?.hero?.profileImg || ""}
-                      onChange={(e) => updateHeroField("profileImg", e.target.value)}
+                      onChange={(e) =>
+                        updateHeroField("profileImg", e.target.value)
+                      }
                       className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-white font-medium mb-2">Background Image URL</label>
+                    <label className="block text-white font-medium mb-2">
+                      Background Image URL
+                    </label>
                     <input
                       type="url"
                       value={portfolioData?.hero?.bgImage || ""}
-                      onChange={(e) => updateHeroField("bgImage", e.target.value)}
+                      onChange={(e) =>
+                        updateHeroField("bgImage", e.target.value)
+                      }
                       className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-white font-medium mb-2">Video URL</label>
+                  <label className="block text-white font-medium mb-2">
+                    Video URL
+                  </label>
                   <input
                     type="url"
                     value={portfolioData?.hero?.videoUrl || ""}
-                    onChange={(e) => updateHeroField("videoUrl", e.target.value)}
+                    onChange={(e) =>
+                      updateHeroField("videoUrl", e.target.value)
+                    }
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
@@ -288,7 +320,10 @@ const handleSave = async () => {
                   </div>
                   <div className="space-y-3">
                     {portfolioData?.hero?.roles?.map((role, index) => (
-                      <div key={index} className="flex gap-3 items-center bg-white/5 p-3 rounded-lg">
+                      <div
+                        key={index}
+                        className="flex gap-3 items-center bg-white/5 p-3 rounded-lg"
+                      >
                         <input
                           type="text"
                           value={role}
@@ -319,18 +354,25 @@ const handleSave = async () => {
                   </div>
                   <div className="space-y-3">
                     {portfolioData?.hero?.buttons?.map((btn, index) => (
-                      <div key={index} className="flex gap-3 items-center bg-white/5 p-3 rounded-lg">
+                      <div
+                        key={index}
+                        className="flex gap-3 items-center bg-white/5 p-3 rounded-lg"
+                      >
                         <input
                           type="text"
                           value={btn.text}
-                          onChange={(e) => updateButton(index, "text", e.target.value)}
+                          onChange={(e) =>
+                            updateButton(index, "text", e.target.value)
+                          }
                           placeholder="Button text"
                           className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                         />
                         <input
                           type="text"
                           value={btn?.icon}
-                          onChange={(e) => updateButton(index, "icon", e.target.value)}
+                          onChange={(e) =>
+                            updateButton(index, "icon", e.target.value)
+                          }
                           placeholder="Icon name"
                           className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                         />
@@ -351,29 +393,41 @@ const handleSave = async () => {
             {activeSection === "about" && (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-white font-medium mb-2">Heading</label>
+                  <label className="block text-white font-medium mb-2">
+                    Heading
+                  </label>
                   <input
                     type="text"
                     value={portfolioData?.about?.heading}
-                    onChange={(e) => updateAboutField("heading", e.target.value)}
+                    onChange={(e) =>
+                      updateAboutField("heading", e.target.value)
+                    }
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Description</label>
+                  <label className="block text-white font-medium mb-2">
+                    Description
+                  </label>
                   <textarea
                     value={portfolioData?.about?.description}
-                    onChange={(e) => updateAboutField("description", e.target.value)}
+                    onChange={(e) =>
+                      updateAboutField("description", e.target.value)
+                    }
                     rows={4}
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-white font-medium mb-2">Social Label</label>
+                  <label className="block text-white font-medium mb-2">
+                    Social Label
+                  </label>
                   <input
                     type="text"
                     value={portfolioData?.about?.socialLabel}
-                    onChange={(e) => updateAboutField("socialLabel", e.target.value)}
+                    onChange={(e) =>
+                      updateAboutField("socialLabel", e.target.value)
+                    }
                     className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                   />
                 </div>
@@ -381,7 +435,9 @@ const handleSave = async () => {
                 {/* Socials */}
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <label className="text-white font-medium">Social Links</label>
+                    <label className="text-white font-medium">
+                      Social Links
+                    </label>
                     <button
                       onClick={addSocial}
                       className="px-4 py-2 bg-green-600 text-white rounded-lg flex items-center gap-2"
@@ -395,14 +451,18 @@ const handleSave = async () => {
                         <input
                           type="text"
                           value={social.icon || ""}
-                          onChange={(e) => updateSocial(index, "icon", e.target.value)}
+                          onChange={(e) =>
+                            updateSocial(index, "icon", e.target.value)
+                          }
                           placeholder="Icon name"
                           className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                         />
                         <input
                           type="url"
                           value={social?.link || ""}
-                          onChange={(e) => updateSocial(index, "link", e.target.value)}
+                          onChange={(e) =>
+                            updateSocial(index, "link", e.target.value)
+                          }
                           placeholder="Link URL"
                           className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white"
                         />
