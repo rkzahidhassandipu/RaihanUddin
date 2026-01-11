@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Save, Plus, Trash2, Eye, EyeOff, Mail, Phone, MessageCircle, MapPin, Edit2, Copy } from 'lucide-react';
 import { useHero } from "../../../hooks/useHero"; 
-import { HeroData } from "../../../types/dataTypes";
+import { PortfolioData } from "../../../types/dataTypes";
 
 const iconMap = {
   FaEnvelope: Mail,
@@ -13,7 +13,7 @@ const iconMap = {
 export default function ContactEditor() {
   const { data: dbData, loading, updateHero } = useHero();
 
-  const [data, setData] = useState<HeroData | null>(null);
+  const [data, setData] = useState<PortfolioData | null>(null);
   const [activeSection, setActiveSection] = useState('header');
   const [showPreview, setShowPreview] = useState(false);
   const [mounted, setMounted] = useState(false);

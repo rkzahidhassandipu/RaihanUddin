@@ -15,8 +15,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
+    // It's often safer to add it to <html> if you use 
+    // browser translators or dark mode extensions too.
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <ClientLayout>
           {children}
         </ClientLayout>

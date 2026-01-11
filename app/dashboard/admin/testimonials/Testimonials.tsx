@@ -11,12 +11,12 @@ import {
   Copy,
 } from "lucide-react";
 import { useHero } from "../../../hooks/useHero"; 
-import { HeroData } from "../../../types/dataTypes";
+import { PortfolioData } from "../../../types/dataTypes";
 
 export default function TestimonialsEditor() {
   const { data: dbData, loading, updateHero } = useHero();
 
-  const [data, setData] = useState<HeroData | null>(null);
+  const [data, setData] = useState<PortfolioData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
 

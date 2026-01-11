@@ -12,12 +12,12 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useHero } from "../../../hooks/useHero";
-import { HeroData } from "../../../types/dataTypes";
+import { PortfolioData } from "../../../types/dataTypes";
 
 export default function ProjectsEditor() {
   const { data: fetchedData, loading, error, updateHero } = useHero();
 
-  const [portfolioData, setPortfolioData] = useState<HeroData | null>(null);
+  const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [activeSection, setActiveSection] = useState<"header" | "projects">(
     "header"
   );

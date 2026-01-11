@@ -18,6 +18,13 @@ const getIcon = (iconName: string) => {
 export default function AboutMe() {
   const { data, loading, error } = useHero();
 
+  // Recursively extract the innermost text
+  const extractText = (obj: any): string => {
+    if (typeof obj === "string") return obj;
+    if (obj?.text) return extractText(obj.text);
+    return "";
+  };
+
   // Wait for data
   if (loading)
     return <p className="text-white text-center mt-20">Loading...</p>;
@@ -47,12 +54,12 @@ export default function AboutMe() {
               {about.journeyTitle}
             </h3>
 
-            {about?.journeyParagraphs?.map((para: AboutParagraph, idx: number) => (
+            {about?.journeyParagraphs?.map((para: AboutParagraph) => (
               <p
                 key={para.id}
                 className="text-gray-300 mb-4 text-sm sm:text-base leading-relaxed"
               >
-                {para.text}
+                {extractText(para.text)}
               </p>
             ))}
 
@@ -72,7 +79,7 @@ export default function AboutMe() {
                   <p className="text-white/70 mb-3 text-sm">{item.desc}</p>
                   <ul className="list-disc list-inside space-y-1 text-white/60 text-xs sm:text-sm">
                     {item.points.map((point) => (
-                      <li key={point.id}>{point.text}</li>
+                      <li key={point.id}>{extractText(point.text)}</li>
                     ))}
                   </ul>
                 </div>

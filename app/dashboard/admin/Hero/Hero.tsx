@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { Save, Plus, Trash2, Eye, EyeOff } from "lucide-react";
 import { useHero } from "../../../hooks/useHero";
-import { HeroData } from "../../../types/dataTypes";
+import { PortfolioData } from "../../../types/dataTypes";
 
 export default function Hero() {
   const { data: fetchedData, loading, error, updateHero } = useHero();
-  const [portfolioData, setPortfolioData] = useState<HeroData>({
+  const [portfolioData, setPortfolioData] = useState<PortfolioData>({
     _id: "",
     hero: {
       greeting: "",

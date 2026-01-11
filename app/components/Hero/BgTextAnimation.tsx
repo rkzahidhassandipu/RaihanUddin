@@ -32,7 +32,6 @@ export default function BgTextAnimation({ text }: { text: string }) {
         className="text-[11vw] font-black text-transparent whitespace-nowrap"
         style={{
           WebkitTextStroke: '1.5px rgba(255, 87, 87, 0.15)',
-          textStroke: '1.5px rgba(255, 87, 87, 0.15)',
         }}
       >
         {text}

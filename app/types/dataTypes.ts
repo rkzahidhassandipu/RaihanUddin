@@ -1,7 +1,18 @@
 // app/types/dataTypes.ts
+
+/**
+ * UTILITY TYPES
+ */
+export interface MongoId {
+  $oid: string;
+}
+
+/**
+ * HERO SECTION
+ */
 export interface HeroButton {
   text: string;
-  icon: string; // store icon name as string like "FaPlay"
+  icon: string; // e.g., "FaPlay"
 }
 
 export interface Hero {
@@ -15,17 +26,13 @@ export interface Hero {
   buttons: HeroButton[];
 }
 
-export interface AboutInterest {
-  id: string;
-  iconName: string;
-  title: string;
-  desc: string;
-  points: AboutPoint[];
-}
-
-export interface AboutPoint {
-  id: string;
-  text: string;
+/**
+ * ABOUT SECTION
+ */
+export interface AboutSocial {
+  platform: string;
+  link: string;
+  icon?: string; // Optional because some entries in your JSON have it, others don't
 }
 
 export interface AboutParagraph {
@@ -33,9 +40,17 @@ export interface AboutParagraph {
   text: string;
 }
 
-export interface AboutSocial {
-  platform: string;
-  link: string;
+export interface AboutPoint {
+  id: string;
+  text: string;
+}
+
+export interface AboutInterest {
+  id: string;
+  iconName: string;
+  title: string;
+  desc: string;
+  points: AboutPoint[];
 }
 
 export interface About {
@@ -49,6 +64,10 @@ export interface About {
   interests: AboutInterest[];
 }
 
+
+/**
+ * SKILLS SECTION
+ */
 export interface SkillItem {
   name: string;
   icon: string;
@@ -60,6 +79,9 @@ export interface Skills {
   items: SkillItem[];
 }
 
+/**
+ * PROJECTS SECTION
+ */
 export interface ProjectLinks {
   live: string;
   github: string;
@@ -84,12 +106,18 @@ export interface Projects {
   list: Project[];
 }
 
+/**
+ * TESTIMONIALS SECTION
+ */
 export interface Testimonials {
   title: string;
   subtitle: string;
   images: string[];
 }
 
+/**
+ * CONTACT SECTION
+ */
 export interface ContactInfo {
   icon: string;
   label: string;
@@ -118,8 +146,11 @@ export interface Contact {
   formFields: ContactFormFields;
 }
 
+/**
+ * ROOT DATA STRUCTURE
+ */
 export interface PortfolioData {
-  _id: string;
+  _id: string | MongoId; // Supports both raw string and MongoDB object format
   hero: Hero;
   about: About;
   skills: Skills;
@@ -127,3 +158,6 @@ export interface PortfolioData {
   testimonials: Testimonials;
   contact: Contact;
 }
+
+// Alias for convenience if you use "HeroData" in some components
+export type HeroData = PortfolioData;

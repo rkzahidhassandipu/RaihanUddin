@@ -2,40 +2,55 @@
 
 import { useState, useEffect } from "react";
 import axiosSecure from "../lib/axios";
-import { HeroData } from "../types/dataTypes";
+import { PortfolioData, HeroData } from "../types/dataTypes";
 
-export const useHero = () => {
-  const [data, setData] = useState<HeroData | null>(null);
+interface UseHeroReturn {
+  data: PortfolioData | null;
+  loading: boolean;
+  error: string | null;
+  updateHero: (updatedData: PortfolioData) => Promise<PortfolioData>;
+}
+
+export const useHero = (): UseHeroReturn => {
+  const [data, setData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch data on mount
   useEffect(() => {
-    axiosSecure
-      .get("/api/hero")
-      .then((res) => setData(res.data))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    const fetchData = async () => {
+      try {
+        const res = await axiosSecure.get<PortfolioData>("/api/hero");
+        setData(res.data);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch hero data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // Function to PATCH / update hero data
+  // PATCH / update hero data
   const updateHero = async (updatedData: HeroData) => {
-  if (!updatedData._id) throw new Error("Hero ID is missing");
+    // Support both string _id and MongoId
+    const id =
+      typeof updatedData._id === "string" ? updatedData._id : updatedData._id.$oid;
 
-  const { _id, ...payload } = updatedData;
+    if (!id) throw new Error("Hero ID is missing");
 
-  try {
-    const res = await axiosSecure.patch(`/api/hero/${_id}`, payload);
-    setData(res.data);
-    return res.data;
-  } catch (err: any) {
-    console.error("Hero update failed:", err.response?.data || err.message);
-    setError(err.message || "Failed to update hero");
-    throw err;
-  }
-};
-
-
+    try {
+      const { _id, ...payload } = updatedData;
+      const res = await axiosSecure.patch<PortfolioData>(`/api/hero/${id}`, payload);
+      setData(res.data);
+      return res.data;
+    } catch (err: any) {
+      console.error("Hero update failed:", err.response?.data || err.message);
+      setError(err.message || "Failed to update hero");
+      throw err;
+    }
+  };
 
   return { data, loading, error, updateHero };
 };

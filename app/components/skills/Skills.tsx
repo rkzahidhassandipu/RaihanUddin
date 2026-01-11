@@ -3,7 +3,8 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useHero } from "@/app/hooks/useHero";
+import { useHero } from "../../hooks/useHero";
+import { SkillItem } from "../../types/dataTypes";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -54,7 +55,7 @@ export default function SkillsSection() {
         </p>
 
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-y-12 gap-x-4">
-          {skills.items.map((skill, index) => (
+          {skills.items.map((skill: SkillItem, index: number) => (
             <div 
               key={index} 
               className="skill-item flex flex-col items-center gap-3 group"
