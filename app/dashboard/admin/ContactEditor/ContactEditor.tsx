@@ -3,11 +3,14 @@ import { Save, Plus, Trash2, Eye, EyeOff, Mail, Phone, MessageCircle, MapPin, Ed
 import { useHero } from "../../../hooks/useHero"; 
 import { PortfolioData } from "../../../types/dataTypes";
 
-const iconMap = {
-  FaEnvelope: Mail,
-  FaPhoneAlt: Phone,
-  FaWhatsapp: MessageCircle,
-  FaMapMarkerAlt: MapPin,
+import { FaEnvelope, FaPhoneAlt, FaWhatsapp, FaMapMarkerAlt } from "react-icons/fa";
+import { IconType } from "react-icons";
+
+const iconMap: Record<string, IconType> = {
+  FaEnvelope,
+  FaPhoneAlt,
+  FaWhatsapp,
+  FaMapMarkerAlt,
 };
 
 export default function ContactEditor() {
